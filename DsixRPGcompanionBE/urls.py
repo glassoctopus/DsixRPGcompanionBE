@@ -1,4 +1,4 @@
-"""DSIXRPGCOMPANIONBE URL Configuration
+"""DsixRPGcompanionBE URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/4.1/topics/http/urls/
@@ -14,8 +14,24 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
+from DsixRPGcompanionBE.views.auth import register_user, check_user
+from rest_framework import routers
+from DsixRPGcompanionBE.views.users import UserView
+from DsixRPGcompanionBE.views.characters import CharacterView
+from DsixRPGcompanionBE.views.skills import SkillView
+from DsixRPGcompanionBE.views.archetypes import ArchetypeView
+
+router = routers.DefaultRouter(trailing_slash=False)
+router.register(r'users', UserView, 'user')
+router.register(r'heros', CharacterView, 'hero')
+router.register(r'skills', SkillView, 'skill')
+router.register(r'archetypes', ArchetypeView, 'archetype')
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('checkuser', check_user, name='checkuser'),
+    path('register', register_user),
+    path('', include(router.urls)),
 ]
