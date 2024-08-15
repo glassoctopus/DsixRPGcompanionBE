@@ -34,5 +34,6 @@ urlpatterns = [
     path('checkuser', check_user, name='checkuser'),
     path('register', register_user),
     path('heros/character-skills', CharacterView.add_skill_to_character, name='add-skill-to-character'),
+    path('heros/<int:character_id>/skills/', CharacterView.as_view({'get': 'retrieve_character_with_skills'}), name='character-with-skills'),
     path('', include(router.urls)),
 ]
