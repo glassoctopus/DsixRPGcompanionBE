@@ -3,7 +3,11 @@ from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers, status
 from rest_framework.exceptions import NotFound
-from DsixRPGcompanionBE.models import Character 
+from DsixRPGcompanionBE.models import Character, Skill, CharacterSkill
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
+from django.views.decorators.http import require_http_methods
+from django.utils.decorators import method_decorator
 
 class CharacterSerializer(serializers.ModelSerializer):
     
@@ -52,7 +56,7 @@ class CharacterView(ViewSet):
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
     
-    def destroy(self, request, pk):
+    def destroy(self, pk):
         """DELETE that hero"""
         try:
             character = Character.objects.get(pk=pk)
@@ -63,5 +67,25 @@ class CharacterView(ViewSet):
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
     
+    @staticmethod
+    @method_decorator(require_http_methods(["POST"]))
+    def add_skill_to_character(request):
+        character_id = request.POST.get('character_id')
+        skill_id = request.POST.get('skill_id')
+        skill_code = request.POST.get('skill_code')
+        character = get_object_or_404(Character, id=character_id)
+        skill = get_object_or_404(Skill, id=skill_id)
+        character_skill, created = CharacterSkill.objects.get_or_create(
+            character=character,
+            skill=skill,
+            defaults={'skill_code': skill_code}
+        )
+        if not created:
+            character_skill.skill_code = skill_code
+            character_skill.save()
+        return JsonResponse({"message": "Skill added to character successfully!", "character_skill_id": character_skill.id})
+
+    def remove_skill_from_character(character_id, skill_id):
+        CharacterSkill.objects.filter(character_id=character_id, skill_id=skill_id).delete()
     
     
