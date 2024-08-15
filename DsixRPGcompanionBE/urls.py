@@ -33,5 +33,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('checkuser', check_user, name='checkuser'),
     path('register', register_user),
+    path('heros/character-skills', CharacterView.add_skill_to_character, name='add-skill-to-character'),
     path('', include(router.urls)),
 ]

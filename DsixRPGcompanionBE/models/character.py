@@ -1,5 +1,6 @@
 from django.db import models
 from .archetype import Archetype
+from .skill import Skill
 
 class Character(models.Model):
     uid = models.CharField(max_length=113, unique=True)
@@ -32,7 +33,7 @@ class Character(models.Model):
     force_points = models.DecimalField(max_digits=2, decimal_places=1)
     dark_side_points = models.DecimalField(max_digits=2, decimal_places=1)
     force_strength = models.DecimalField(max_digits=2, decimal_places=1)
-    
+    skills = models.ManyToManyField(Skill, through='CharacterSkill')
     
     def __str__(self):
         return self.name

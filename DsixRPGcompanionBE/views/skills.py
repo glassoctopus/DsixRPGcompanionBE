@@ -20,6 +20,7 @@ class SkillView(ViewSet):
         
         if isinstance(data, list):
             created_skills = []
+            size_of_list = 0
             for item in data:
                 serializer = SkillSerializer(data=item)
                 if serializer.is_valid():
@@ -28,7 +29,8 @@ class SkillView(ViewSet):
                 else:
                     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-            return Response(created_skills, status=status.HTTP_201_CREATED)
+            size_of_list = len(created_skills)
+            return Response({"message": f"There were {size_of_list} entries in this request to create skills. Here is that list",  "created_skills": created_skills},created_skills, status=status.HTTP_201_CREATED)
         else:
             serializer = SkillSerializer(data=data)
             if serializer.is_valid():
