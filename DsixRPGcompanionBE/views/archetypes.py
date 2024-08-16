@@ -3,12 +3,8 @@ from rest_framework.response import Response
 from rest_framework import serializers, status
 from rest_framework.exceptions import NotFound
 from DsixRPGcompanionBE.models import Archetype
-
-# TODO
-# class ArchetypeEquipmentSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = ArchetypeEquipment
-#         fields = ('id', 'archetype', 'equipment', 'quantity')
+#\/not working need to figure out why
+#from serializers.archetype import ArchetypeSerializer
 
 class ArchetypeSerializer(serializers.ModelSerializer):
     # archetype_equipment = ArchetypeEquipmentSerializer(many=True, required=False)
@@ -23,7 +19,7 @@ class ArchetypeSerializer(serializers.ModelSerializer):
         # for piece in equipment_list:
         #     ArchetypeEquipment.objects.create(archetype=archetype, **piece)
         return archetype
-
+    
 class ArchetypeView(ViewSet):
     """Archetype API endpoint for CRUD"""
     def create(self, request, *args, **kwargs):
@@ -70,7 +66,7 @@ class ArchetypeView(ViewSet):
             serializer = ArchetypeSerializer(archetype, data=request.data)
             if serializer.is_valid():
                 serializer.save()
-                return Response(status=status.HTTP_200_OK)
+                return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Archetype.DoesNotExist:
             return Response({"error": "Archtype not found."}, status=status.HTTP_404_NOT_FOUND)
