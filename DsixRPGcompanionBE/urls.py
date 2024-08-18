@@ -21,12 +21,14 @@ from DsixRPGcompanionBE.views.users import UserView
 from DsixRPGcompanionBE.views.characters import CharacterView
 from DsixRPGcompanionBE.views.skills import SkillView
 from DsixRPGcompanionBE.views.archetypes import ArchetypeView
+from DsixRPGcompanionBE.views.user_group import UserGroupView
 
 router = routers.DefaultRouter(trailing_slash=False)
 router.register(r'users', UserView, 'user')
 router.register(r'heros', CharacterView, 'hero')
 router.register(r'skills', SkillView, 'skill')
 router.register(r'archetypes', ArchetypeView, 'archetype')
+router.register(r'usergroups', UserGroupView, basename='usergroup')
 
 
 urlpatterns = [
@@ -35,6 +37,7 @@ urlpatterns = [
     path('register', register_user),
     path('heros/character-skills', CharacterView.add_skill_to_character, name='add-skill-to-character'),
     path('heros/<int:character_id>/skills/', CharacterView.as_view({'get': 'retrieve_character_with_skills'}), name='character-with-skills'),
-     path('heros/<int:pk>/update-skill-code/', CharacterView.as_view({'put': 'update_skill_code'}), name='update-skill-code'),
+    path('heros/<int:pk>/update-skill-code/', CharacterView.as_view({'put': 'update_skill_code'}), name='update-skill-code'),
+    path('usergroups/<int:pk>/add_users/', UserGroupView.as_view({'post': 'add_users'}), name='usergroup-add-users'),
     path('', include(router.urls)),
 ]
