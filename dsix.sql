@@ -2,6 +2,8 @@ DELETE FROM DsixRPGcompanionBE_skill;
 
 DELETE FROM DsixRPGcompanionBE_characterskill;
 
+DELETE FROM DsixRPGcompanionBE_skillspecialization;
+
 SELECT *
 FROM DsixRPGcompanionBE_characterskill
 
@@ -9,7 +11,7 @@ FROM DsixRPGcompanionBE_characterskill
 DELETE FROM sqlite_sequence WHERE name='DsixRPGcompanionBE_character';
 DELETE FROM sqlite_sequence WHERE name='DsixRPGcompanionBE_skill';
 DELETE FROM sqlite_sequence WHERE name='DsixRPGcompanionBE_characterskill';
-
+DELETE FROM sqlite_sequence WHERE name='DsixRPGcompanionBE_skillspecialization';
 
 SELECT name 
 FROM sqlite_master 

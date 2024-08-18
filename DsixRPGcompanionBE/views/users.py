@@ -6,10 +6,9 @@ from DsixRPGcompanionBE.models import User
 from django.utils import timezone
 
 class UserSerializer(serializers.ModelSerializer):
-    
     class Meta:
         model = User
-        fields = ('uid', 'id', 'bio', 'game_master', 'admin')
+        fields = ('uid', 'id', 'handle', 'bio', 'game_master', 'admin')
 
 def get_current_date_formatted():
     """helper time/date stamp"""
@@ -24,38 +23,50 @@ class UserView(ViewSet):
         user = User.objects.get(pk=pk)
         serializer = UserSerializer(user)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    def list(self, requests):
+        """list all Users"""
+        users = User.objects.all()
+        serializer = UserSerializer(users, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def create(self, request):
         """POST / Create User """
-        user = User.objects.create(
-            bio=request.data["bio"],
-            uid=request.data["uid"],
-        )
-        
-        user.save()
-        serializer = UserSerializer(user)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        serializer = UserSerializer(data=request.data)
+        if serializer.is_valid():
+            
+            user = User.objects.create(
+                bio=request.data["bio"],
+                uid=request.data["uid"],
+            )
+            
+            user.save()
+            serializer = UserSerializer(user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     def update(self, request, pk=None):
         """PUT / Update a User"""
         try:
             user = User.objects.get(pk=pk)
-            data = request.data
-            
-            # Debug: print request data
-            print("Request data:", data)
-            
-            # update if in request data
-            user.bio = data.get("bio")
-            
-            user.save()
-            return Response(status=status.HTTP_200_OK)
+            serializer = UserSerializer(user, data = request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except user.DoesNotExist:
+            raise Response({"error": "User not found."}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return Response({"error": str(e)}, status.HTTP_400_BAD_REQUEST)
     
     def destroy(self, request, pk):
         """DELETE"""
-        user = User.objects.get(pk=pk)
-        user.delete()
-        return Response(None, status=status.HTTP_204_NO_CONTENT)
-        
+        try:
+            user = User.objects.get(pk=pk)
+            serializer = UserSerializer(user)
+            user.delete()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except User.DoesNotExist:
+            return Response({"error": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
