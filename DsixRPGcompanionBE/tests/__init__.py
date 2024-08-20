@@ -1,0 +1,1 @@
+from .test_archetype import ArchetypeAPITestCase

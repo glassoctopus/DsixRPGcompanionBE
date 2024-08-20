@@ -35,9 +35,11 @@ class UserView(ViewSet):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
             
+            
             user = User.objects.create(
-                bio=request.data["bio"],
                 uid=request.data["uid"],
+                handle=request.data["handle"],
+                bio=request.data["bio"],
             )
             
             user.save()

@@ -73,6 +73,7 @@ class UserGroupView(ViewSet):
         user_group.delete()
         return Response(serializer.data, status=status.HTTP_200_OK)
     
+    @action(detail=True, methods=['post'])
     def add_user(self, request, pk=None):
         try:
             user_group = UserGroup.objects.get(pk=pk)
@@ -127,31 +128,61 @@ class UserGroupView(ViewSet):
 
         return Response(UserGroupSerializer(user_group).data)
     
-    @action(detail=True, methods=['delete'], url_path='remove_user/(?P<user_id>[^/.]+)')
-    def remove_user(self, request, pk=None, user_id=None):
+    @action(detail=True, methods=['post'])
+    def remove_user(self, request, pk=None):
         try:
             user_group = UserGroup.objects.get(pk=pk)
         except UserGroup.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "User group not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        user_id = request.data.get('user_id')
+
+        if not user_id:
+            return Response({"error": "No user ID provided."}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            user = User.objects.get(pk=user_id)
+            user = User.objects.get(id=user_id)
         except User.DoesNotExist:
-            return Response({"error": "User does not exist."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "User not found."}, status=status.HTTP_404_NOT_FOUND)
 
-        user_group.users.remove(user)
-        return Response(UserGroupSerializer(user_group).data)
+        if user not in user_group.users.all():
+            return Response({"error": "User is not a member of this group."}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            user_group.users.remove(user)
+            user_group.save()
+            return Response(UserGroupSerializer(user_group).data, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
+    @action(detail=True, methods=['post'])
     def remove_users(self, request, pk=None):
         try:
             user_group = UserGroup.objects.get(pk=pk)
         except UserGroup.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-    
+            return Response({"error": "User group not found."}, status=status.HTTP_404_NOT_FOUND)
+        
         user_ids = request.data.get('user_ids', [])
+        if not user_ids:
+            return Response({"error": "No user IDs provided."}, status=status.HTTP_400_BAD_REQUEST)
+        
         users = User.objects.filter(id__in=user_ids)
-        user_group.users.remove(*users)
-        return Response(UserGroupSerializer(user_group).data)
+        
+        missing_users = set(user_ids) - set(users.values_list('id', flat=True))
+        if missing_users:
+            return Response({"error": f"Users with IDs {', '.join(map(str, missing_users))} not found."}, status=status.HTTP_404_NOT_FOUND)
+        
+        users_in_group = user_group.users.filter(id__in=user_ids)
+        not_in_group = set(user_ids) - set(users_in_group.values_list('id', flat=True))
+        if not_in_group:
+            return Response({"error": f"Users with IDs {', '.join(map(str, not_in_group))} are not members of this group."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            user_group.users.remove(*users)
+            user_group.save() 
+            return Response(UserGroupSerializer(user_group).data, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
     @action(detail=True, methods=['post'])
     def add_character(self, request, pk=None):

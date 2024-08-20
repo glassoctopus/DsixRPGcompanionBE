@@ -26,15 +26,31 @@ class CharacterSkillSerializer(serializers.ModelSerializer):
         model = CharacterSkill
         fields = ('id', 'skill', 'skill_code', 'specializations')  
             
-class CharacterView(ViewSet):
+class CharacterView(ViewSet): 
     
-    def create(self, request):
-        """POST / Create hero """
-        serializer =  CharacterSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def create(self, request, *args, **kwargs):
+        """POST / Create hero(s)"""
+        data = request.data 
+        
+        if isinstance(data, list): 
+            created_character = []
+            how_many = 0
+            for hero in data:
+                serializer = CharacterSerializer(data=hero)
+                if serializer.is_valid():
+                    hero = serializer.save()
+                    created_character.append(serializer.data)
+                else:
+                    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                
+            how_many = len(created_character)
+            return Response({"": f"There were {how_many} entries in this request to create Characters / Heros. Here is that list", "Characters added:": created_character}, status=status.HTTP_201_CREATED)
+        else:
+            serializer = CharacterSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     def retrieve(self, request, pk):
         """get a single hero"""
