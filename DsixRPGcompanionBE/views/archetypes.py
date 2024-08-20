@@ -3,27 +3,15 @@ from rest_framework.response import Response
 from rest_framework import serializers, status
 from rest_framework.exceptions import NotFound
 from DsixRPGcompanionBE.models import Archetype
-#\/not working need to figure out why
-#from serializers.archetype import ArchetypeSerializer
+from DsixRPGcompanionBE.serializers.archetype import ArchetypeSerializer
 
-class ArchetypeSerializer(serializers.ModelSerializer):
-    # archetype_equipment = ArchetypeEquipmentSerializer(many=True, required=False)
-
-    class Meta:
-        model = Archetype
-        fields = ('id', 'archetype_name', 'archetype_personality', 'archetype_background', 'archetype_objectives', 'archetype_a_quote', 'archetype_force_sensitive', 'archetype_dexiterity', 'archetype_knowledge', 'archetype_mechanical', 'archetype_perception', 'archetype_strength', 'archetype_technical', 'archetype_force_control', 'archetype_force_sense', 'archetype_force_alter')
-        
-    def create(self, validated_data):
-        # equipment_list = validated_data.pop('archetype_equipment', [])
-        archetype = Archetype.objects.create(**validated_data)
-        # for piece in equipment_list:
-        #     ArchetypeEquipment.objects.create(archetype=archetype, **piece)
-        return archetype
-    
+   
 class ArchetypeView(ViewSet):
     """Archetype API endpoint for CRUD"""
     def create(self, request, *args, **kwargs):
         data = request.data
+        how_many = 0
+        
         print("Received create request with data:", data)        
         if isinstance(data, list):
             created_archetypes = []
@@ -34,7 +22,8 @@ class ArchetypeView(ViewSet):
                     created_archetypes.append(serializer.data)
                 else:
                     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-            return Response(created_archetypes, status=status.HTTP_201_CREATED)
+            how_many = len(created_archetypes)
+            return Response({"message": f"There were {how_many} entries in this request to create archetypes. Here is that list", "created archetypes": created_archetypes}, status=status.HTTP_201_CREATED)
         else:
             serializer = ArchetypeSerializer(data=data)
             if serializer.is_valid():

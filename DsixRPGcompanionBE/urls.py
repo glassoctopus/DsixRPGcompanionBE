@@ -38,6 +38,13 @@ urlpatterns = [
     path('heros/character-skills', CharacterView.add_skill_to_character, name='add-skill-to-character'),
     path('heros/<int:character_id>/skills/', CharacterView.as_view({'get': 'retrieve_character_with_skills'}), name='character-with-skills'),
     path('heros/<int:pk>/update-skill-code/', CharacterView.as_view({'put': 'update_skill_code'}), name='update-skill-code'),
+    path('usergroups/<int:pk>/add_user/', UserGroupView.as_view({'post': 'add_user'}), name='usergroup-add-user'),
     path('usergroups/<int:pk>/add_users/', UserGroupView.as_view({'post': 'add_users'}), name='usergroup-add-users'),
+    path('usergroups/<int:pk>/remove_user/', UserGroupView.as_view({'post': 'remove_user'}), name='usergroup-remove-user'),
+    path('usergroups/<int:pk>/remove_users/', UserGroupView.as_view({'post': 'remove_users'}), name='usergroup-remove-users'),
+    path('usergroups/<int:pk>/add_character/', UserGroupView.as_view({'post': 'add_character'}), name='usergroup-add-character'),
+    path('usergroups/<int:pk>/add_characters/', UserGroupView.as_view({'post': 'add_characters'}), name='usergroup-add-characters'),
+    path('usergroups/<int:pk>/remove_character/', UserGroupView.as_view({'post': 'remove_character'}), name='usergroup-remove-character'),
+    path('usergroups/<int:pk>/remove_characters/', UserGroupView.as_view({'post': 'remove_characters'}), name='usergroup-remove-characters'),
     path('', include(router.urls)),
 ]

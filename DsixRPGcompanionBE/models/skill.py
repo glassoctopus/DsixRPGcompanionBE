@@ -10,7 +10,7 @@ class Skill(models.Model):
     modifiers = models.CharField(max_length=3666, null=True, blank=True)
     skill_use_notes = models.CharField(max_length=3666, null=True, blank=True)
     skill_game_notes = models.CharField(max_length=3666, null=True, blank=True)
-    skill_code = models.DecimalField(max_digits=2, decimal_places=1)
+    skill_code = models.DecimalField(max_digits=3, decimal_places=1)
     
     def __str__(self):
         return f"{self.skill_name} (code {self.skill_code})"
