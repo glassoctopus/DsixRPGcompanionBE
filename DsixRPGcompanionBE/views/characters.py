@@ -4,28 +4,17 @@ from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers, status
 from rest_framework.exceptions import NotFound
-from DsixRPGcompanionBE.models import Character, Skill, CharacterSkill, SkillSpecialization
 from django.http import JsonResponse, HttpResponseBadRequest, HttpResponseNotFound
 from django.views.decorators.http import require_http_methods
+from django.db.models import Prefetch
 from django.core.exceptions import ObjectDoesNotExist
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import action
-from .skills import SkillSerializer , SkillSpecializationSerializer
+from DsixRPGcompanionBE.models import Character, Skill, CharacterSkill, SkillSpecialization
+from DsixRPGcompanionBE.serializers.character import CharacterSerializer
+from DsixRPGcompanionBE.serializers.character_skill import CharacterSkillSerializer
 import json
 
-class CharacterSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Character
-        fields = ('id', 'uid', 'user', 'NPC', 'image', 'name', 'archetype', 'species', 'homeworld', 'gender', 'age', 'height', 'weight', 'physical_description', 'personality', 'background', 'objectives', 'a_quote', 'credits', 'force_sensitive', 'dexterity', 'knowledge', 'mechanical', 'perception', 'strength', 'technical', 'force_control', 'force_sense', 'force_alter', 'force_points', 'dark_side_points', 'force_strength')
-
-class CharacterSkillSerializer(serializers.ModelSerializer):
-    skill = SkillSerializer()
-    specializations = SkillSpecializationSerializer(many=True, read_only=True)
-    
-    class Meta:
-        model = CharacterSkill
-        fields = ('id', 'skill', 'skill_code', 'specializations')  
-            
 class CharacterView(ViewSet): 
     
     def create(self, request, *args, **kwargs):
@@ -55,7 +44,10 @@ class CharacterView(ViewSet):
     def retrieve(self, request, pk):
         """get a single hero"""
         try:
-            character = Character.objects.get(pk=pk)
+            character = Character.objects.prefetch_related(
+                Prefetch('character_skills__skill', to_attr='prefetched_skills'),
+                Prefetch('character_skills__specializations', to_attr='prefetched_specializations')
+            ).get(pk=pk)
             serializer = CharacterSerializer(character)
             return Response(serializer.data, status=status.HTTP_200_OK)            
         except Character.DoesNotExist:
@@ -194,32 +186,6 @@ class CharacterView(ViewSet):
             return HttpResponseBadRequest("Invalid JSON format.")
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=500)
-
-
-    def retrieve_character_with_skills(self, request, character_id):
-        """GET / Retrieve a character with associated skills"""
-        try:
-            character = get_object_or_404(Character, id=character_id)
-            character_skills = CharacterSkill.objects.filter(character=character)
-            
-            # Serialize the character data
-            character_serializer = CharacterSerializer(character)
-            
-            # Serialize the character skills
-            character_skills_serializer = CharacterSkillSerializer(character_skills, many=True)
-            
-            # Prepare the response data
-            response_data = {
-                'character': character_serializer.data,
-                'skills': character_skills_serializer.data
-            }
-            
-            return Response(response_data, status=status.HTTP_200_OK)
-        
-        except Character.DoesNotExist:
-            return Response({'error': 'Character not found'}, status=status.HTTP_404_NOT_FOUND)
-        except Exception as e:
-            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
     @action(detail=True, methods=['patch'], url_path='update-skill-code')
     def update_skill_code(self, request, pk=None):

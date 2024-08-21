@@ -52,7 +52,7 @@ class ArchetypeView(ViewSet):
         """Update an Archetype"""
         try:
             archetype = Archetype.objects.get(pk=pk)
-            serializer = ArchetypeSerializer(archetype, data=request.data)
+            serializer = ArchetypeSerializer(archetype, data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_200_OK)

@@ -65,7 +65,7 @@ class ArchetypeAPITestCase(APITestCase):
             'archetype_name': 'Skilled Pilot',
             'archetype_starting_credits': 1500
         }
-        response = self.client.patch(reverse('archetype-detail', args=[archetype_id]), update_data, format='json')
+        response = self.client.put(reverse('archetype-detail', args=[archetype_id]), update_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['archetype_name'], 'Skilled Pilot')
         self.assertEqual(response.data['archetype_starting_credits'], 1500)
