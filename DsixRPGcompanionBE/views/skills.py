@@ -5,18 +5,8 @@ from rest_framework import serializers, status
 from rest_framework.exceptions import NotFound
 from django.core.exceptions import ObjectDoesNotExist
 from DsixRPGcompanionBE.models import Skill, SkillSpecialization
+from DsixRPGcompanionBE.serializers.skill import SkillSerializer
 
-class SkillSerializer(serializers.ModelSerializer):
-    """super serial"""
-    skill_code = serializers.DecimalField(max_digits=2, decimal_places=1, coerce_to_string=False)
-    class Meta:
-        model = Skill
-        fields = ('id', 'attribute', 'skill_name', 'time_taken', 'is_a_reaction', 'force_skill', 'specializations_notes', 'skill_use_notes', 'skill_game_notes', 'skill_code')
-
-class SkillSpecializationSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = SkillSpecialization
-        fields = ('id', 'character_skill', 'specialization_name', 'specialization_code')
                 
 class SkillView(ViewSet):
     """skill API endpoint for CRUD"""
