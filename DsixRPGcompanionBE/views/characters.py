@@ -58,8 +58,9 @@ class CharacterView(ViewSet):
     def list(self, request):
         """list all characters"""
         characters = Character.objects.all()
-        serializer = CharacterSerializer(characters, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        how_many = characters.count()  
+        in_the_toy_box = CharacterSerializer(characters, many=True)
+        return Response({"message": f"We're gettng all {how_many} heros in your toy box out!", "They are":in_the_toy_box.data}, status=status.HTTP_200_OK)
     
     def update(self, request, pk=None):
         """Put / Update"""
@@ -68,7 +69,7 @@ class CharacterView(ViewSet):
             serializer = CharacterSerializer(character, data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save()
-                return Response(serializer.data,status=status.HTTP_200_OK)
+                return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Character.DoesNotExist:
             raise Response({"error": "Character not found."}, status=status.HTTP_404_NOT_FOUND)
@@ -79,10 +80,14 @@ class CharacterView(ViewSet):
         """DELETE that hero"""
         try:
             character = Character.objects.get(pk=pk)
-            serializer = CharacterSerializer(character) 
+            if character.archetype is not None:
+                print("Archetype associated:", character.archetype)
+            serializer = CharacterSerializer(character)
+            print("serializer, instance id:", serializer.data.keys())
             character.delete()
+            print('Character "deleted" successfully')
             return Response(serializer.data, status=status.HTTP_200_OK) 
-        except character.DoesNotExist:
+        except Character.DoesNotExist:
             return Response({"error": "Character not found."}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
