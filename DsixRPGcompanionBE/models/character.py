@@ -9,7 +9,7 @@ class Character(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='characters')
     image = models.CharField(max_length=223)
     name = models.CharField(max_length=69)
-    archetype = models.ForeignKey(Archetype, on_delete=models.CASCADE, related_name='archetypes')
+    archetype = models.ForeignKey(Archetype, on_delete=models.CASCADE, related_name='archetypes', null=True, blank=True)
     species = models.CharField(max_length=69)
     homeworld = models.CharField(max_length=69)
     gender = models.CharField(max_length=13)
