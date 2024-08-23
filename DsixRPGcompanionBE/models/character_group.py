@@ -3,11 +3,11 @@ from django.core.exceptions import ValidationError
 from .character import Character
 from .user import User
 
-class UserGroup(models.Model):
+class CharacterGroup(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='owned_groups')
     group_name = models.CharField(max_length=69)
     game_master = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='gm_groups')
-    characters = models.ManyToManyField(Character, related_name='user_groups')
-    users = models.ManyToManyField(User, related_name='user_groups')
+    characters = models.ManyToManyField(Character, blank=True, related_name='chatacter_groups')
     private = models.BooleanField(default=False)
     is_adventure_party = models.BooleanField(default=False)
 
@@ -15,7 +15,7 @@ class UserGroup(models.Model):
         return self.group_name
 
     def clean(self):
-        # If the group is public, it must have a game master
+        # If the group is an adventure party, it must have a game master
         if not self.private and self.is_adventure_party and not self.game_master:
             raise ValidationError("A public adventure party must have a game master.")
 
@@ -31,4 +31,4 @@ class UserGroup(models.Model):
     def save(self, *args, **kwargs):
         from .user import User  # Import the User model here
         self.clean()  # Call the clean method for validation
-        super(UserGroup, self).save(*args, **kwargs)
+        super(CharacterGroup, self).save(*args, **kwargs)

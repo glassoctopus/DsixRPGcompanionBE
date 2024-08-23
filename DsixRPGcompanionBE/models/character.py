@@ -6,7 +6,7 @@ from .user import User
 class Character(models.Model):
     uid = models.CharField(max_length=113, unique=True)
     NPC = models.BooleanField(default=False)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='characters')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='characters', null=True, blank=True)
     image = models.CharField(max_length=223)
     name = models.CharField(max_length=69)
     archetype = models.ForeignKey(Archetype, on_delete=models.CASCADE, related_name='archetypes', null=True, blank=True)
