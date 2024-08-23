@@ -3,5 +3,5 @@ from .character import Character
 from .character_skill import CharacterSkill  
 from .skill import Skill
 from .skill_specialization import SkillSpecialization
-from .user_group import UserGroup
+from .character_group import CharacterGroup
 from .user import User

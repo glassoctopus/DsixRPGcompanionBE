@@ -21,15 +21,14 @@ from DsixRPGcompanionBE.views.users import UserView
 from DsixRPGcompanionBE.views.characters import CharacterView
 from DsixRPGcompanionBE.views.skills import SkillView
 from DsixRPGcompanionBE.views.archetypes import ArchetypeView
-from DsixRPGcompanionBE.views.user_group import UserGroupView
+from DsixRPGcompanionBE.views.character_group import CharacterGroupView
 
 router = routers.DefaultRouter(trailing_slash=False)
 router.register(r'users', UserView, 'user')
 router.register(r'heros', CharacterView, 'hero')
 router.register(r'skills', SkillView, 'skill')
 router.register(r'archetypes', ArchetypeView, 'archetype')
-router.register(r'usergroups', UserGroupView, basename='usergroup')
-
+router.register(r'charactergroups', CharacterGroupView, basename='charactergroup')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -37,13 +36,9 @@ urlpatterns = [
     path('register', register_user),
     path('heros/character-skills', CharacterView.add_skill_to_character, name='add-skill-to-character'),
     path('heros/<int:pk>/update-skill-code/', CharacterView.as_view({'put': 'update_skill_code'}), name='update-skill-code'),
-    path('usergroups/<int:pk>/add_user/', UserGroupView.as_view({'post': 'add_user'}), name='usergroup-add-user'),
-    path('usergroups/<int:pk>/add_users/', UserGroupView.as_view({'post': 'add_users'}), name='usergroup-add-users'),
-    path('usergroups/<int:pk>/remove_user/', UserGroupView.as_view({'post': 'remove_user'}), name='usergroup-remove-user'),
-    path('usergroups/<int:pk>/remove_users/', UserGroupView.as_view({'post': 'remove_users'}), name='usergroup-remove-users'),
-    path('usergroups/<int:pk>/add_character/', UserGroupView.as_view({'post': 'add_character'}), name='usergroup-add-character'),
-    path('usergroups/<int:pk>/add_characters/', UserGroupView.as_view({'post': 'add_characters'}), name='usergroup-add-characters'),
-    path('usergroups/<int:pk>/remove_character/', UserGroupView.as_view({'post': 'remove_character'}), name='usergroup-remove-character'),
-    path('usergroups/<int:pk>/remove_characters/', UserGroupView.as_view({'post': 'remove_characters'}), name='usergroup-remove-characters'),
+    path('charactergroups/<int:pk>/add_character/', CharacterGroupView.as_view({'post': 'add_character'}), name='charactergroup-add-character'),
+    path('charactergroups/<int:pk>/add_characters/', CharacterGroupView.as_view({'post': 'add_characters'}), name='charactergroup-add-characters'),
+    path('charactergroups/<int:pk>/remove_character/', CharacterGroupView.as_view({'post': 'remove_character'}), name='charactergroup-remove-character'),
+    path('charactergroups/<int:pk>/remove_characters/', CharacterGroupView.as_view({'post': 'remove_characters'}), name='charactergroup-remove-characters'),
     path('', include(router.urls)),
 ]
