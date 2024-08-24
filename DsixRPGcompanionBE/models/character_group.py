@@ -19,15 +19,6 @@ class CharacterGroup(models.Model):
         if not self.private and self.is_adventure_party and not self.game_master:
             raise ValidationError("A public adventure party must have a game master.")
 
-        # If the group is private, having a game master is optional
-        if self.private and self.is_adventure_party and self.game_master:
-            if not self.users.filter(id=self.game_master.id, game_master=True).exists():
-                raise ValidationError("group is private, for the user only")
-
-        # Ensure only one user is set as the game master for the group
-        if self.game_master and not self.users.filter(id=self.game_master.id).exists():
-            raise ValidationError("Only a single user with the game master flag set, must be part of an Adventure user group.")
-
     def save(self, *args, **kwargs):
         from .user import User  # Import the User model here
         self.clean()  # Call the clean method for validation
