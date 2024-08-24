@@ -36,6 +36,8 @@ urlpatterns = [
     path('register', register_user),
     path('heros/character-skills', CharacterView.add_skill_to_character, name='add-skill-to-character'),
     path('heros/<int:pk>/update-skill-code/', CharacterView.as_view({'put': 'update_skill_code'}), name='update-skill-code'),
+    path('heros/<int:pk>/skills/', CharacterView.as_view({'get': 'get_skills_for_character'}), name='get-character-skills'),
+    path('heros/<int:character_id>/skills/<int:skill_id>/', CharacterView.as_view({'delete': 'remove_skill_from_character'})),
     path('charactergroups/<int:pk>/add_character/', CharacterGroupView.as_view({'post': 'add_character'}), name='charactergroup-add-character'),
     path('charactergroups/<int:pk>/add_characters/', CharacterGroupView.as_view({'post': 'add_characters'}), name='charactergroup-add-characters'),
     path('charactergroups/<int:pk>/remove_character/', CharacterGroupView.as_view({'post': 'remove_character'}), name='charactergroup-remove-character'),

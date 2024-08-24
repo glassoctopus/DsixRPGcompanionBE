@@ -91,7 +91,7 @@ class CharacterView(ViewSet):
             return Response({"error": "Character not found."}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-        
+    
     #character skills below, need to see how to get rid of this csrf hack
     @csrf_exempt
     @require_http_methods(["POST"])
@@ -192,6 +192,20 @@ class CharacterView(ViewSet):
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=500)
     
+    @action(detail=True, methods=['get'], url_path='skills')
+    def get_skills_for_character(self, request, pk=None):
+        """GET all skills for a specific character"""
+        try:
+            character = get_object_or_404(Character, pk=pk)
+            character_skills = CharacterSkill.objects.filter(character_id=pk)
+            serializer = CharacterSkillSerializer(character_skills, many=True)
+            
+            return Response(serializer.data, status=status.HTTP_200_OK)     
+        except CharacterSkill.DoesNotExist:
+            return Response({"error": "No skills found for this character."}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
     @action(detail=True, methods=['patch'], url_path='update-skill-code')
     def update_skill_code(self, request, pk=None):
         """PATCH /heros/{id}/update-skill-code/ Update skill_code for a character-skill relation"""
@@ -218,14 +232,18 @@ class CharacterView(ViewSet):
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
-    def remove_skill_from_character(self, request, character_id, skill_id):
+    @action(detail=True, methods=['delete'], url_path='skills/(?P<skill_id>[^/.]+)')
+    def remove_skill_from_character(self, request, pk=None, skill_id=None):
         """DELETE a skill from a character"""
         try:
-            CharacterSkill.objects.filter(character_id=character_id, skill_id=skill_id).delete()
+            # pk is the character_id
+            character_skill = CharacterSkill.objects.get(character_id=pk, skill_id=skill_id)
+            character_skill.delete()
             return Response({"message": "Skill removed successfully."}, status=status.HTTP_204_NO_CONTENT)
         except CharacterSkill.DoesNotExist:
             return Response({"error": "Skill not found for this character."}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
     
     
