@@ -25,5 +25,5 @@ sample user
 }
 
 -Create a Character, or many
--Group characters in privte groups or in public groups with other users
+-Group characters in private groups or in public groups with other users
 -Create an adventure party with a game master
