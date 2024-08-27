@@ -21,6 +21,7 @@ def check_user(request):
         data = {
             'id': user.id,
             'uid': user.uid,
+            'handle': user.handle,
             'bio': user.bio,
             'admin': user.admin,
             'game_master': user.game_master
@@ -43,7 +44,10 @@ def register_user(request):
     # Now save the user info in the levelupapi_user table
     user = User.objects.create(
         bio=request.data['bio'],
-        uid=request.data['uid']
+        uid=request.data['uid'],
+        handle=request.data['handle'],
+        game_master=request.data['gameMaster'],
+        admin=request.data['admin']
     )
 
     # Return the user info to the client

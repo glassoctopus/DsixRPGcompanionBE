@@ -40,6 +40,7 @@ class UserView(ViewSet):
                 uid=request.data["uid"],
                 handle=request.data["handle"],
                 bio=request.data["bio"],
+                game_master=request.data["gameMaster"],
             )
             
             user.save()

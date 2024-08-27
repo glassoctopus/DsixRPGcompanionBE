@@ -22,8 +22,10 @@ from DsixRPGcompanionBE.views.characters import CharacterView
 from DsixRPGcompanionBE.views.skills import SkillView
 from DsixRPGcompanionBE.views.archetypes import ArchetypeView
 from DsixRPGcompanionBE.views.character_group import CharacterGroupView
+from DsixRPGcompanionBE.views.notes import NoteView
 
 router = routers.DefaultRouter(trailing_slash=False)
+router.register(r'notes', NoteView, 'note')
 router.register(r'users', UserView, 'user')
 router.register(r'heros', CharacterView, 'hero')
 router.register(r'skills', SkillView, 'skill')
