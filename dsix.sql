@@ -1,6 +1,10 @@
 
 -- kill all entries in the table
 -- Reset the auto-increment counter
+
+DELETE FROM DsixRPGcompanionBE_user;
+DELETE FROM sqlite_sequence WHERE name='DsixRPGcompanionBE_user';
+
 DELETE FROM DsixRPGcompanionBE_archetype;
 DELETE FROM sqlite_sequence WHERE name='DsixRPGcompanionBE_archetype';
 
