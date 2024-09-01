@@ -60,6 +60,7 @@ class CharacterView(ViewSet):
         characters = Character.objects.all()
         how_many = characters.count()  
         in_the_toy_box = CharacterSerializer(characters, many=True)
+        # return Response(in_the_toy_box.data, status=status.HTTP_200_OK)
         return Response({"message": f"We're gettng all {how_many} heros in your toy box out!", "They are":in_the_toy_box.data}, status=status.HTTP_200_OK)
     
     def update(self, request, pk=None):

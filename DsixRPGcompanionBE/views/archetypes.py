@@ -7,7 +7,7 @@ from DsixRPGcompanionBE.serializers.archetype import ArchetypeSerializer
 
    
 class ArchetypeView(ViewSet):
-    """Archetype API endpoint for CRUD"""
+    """Archetype viewset, CRUD"""
     def create(self, request, *args, **kwargs):
         data = request.data
         how_many = 0
