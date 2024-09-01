@@ -41,6 +41,7 @@ class UserView(ViewSet):
                 handle=request.data["handle"],
                 bio=request.data["bio"],
                 game_master=request.data["gameMaster"],
+                admin=request.data["admin"],
             )
             
             user.save()

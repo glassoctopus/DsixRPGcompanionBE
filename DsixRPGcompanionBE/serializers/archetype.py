@@ -9,6 +9,15 @@ from DsixRPGcompanionBE.models.archetype import Archetype
 
 class ArchetypeSerializer(serializers.ModelSerializer):
     # archetype_equipment = ArchetypeEquipmentSerializer(many=True, required=False)
+    archetype_dexterity = serializers.DecimalField(max_digits=3, decimal_places=1)
+    archetype_knowledge = serializers.DecimalField(max_digits=3, decimal_places=1)
+    archetype_mechanical = serializers.DecimalField(max_digits=3, decimal_places=1)
+    archetype_perception = serializers.DecimalField(max_digits=3, decimal_places=1)
+    archetype_strength = serializers.DecimalField(max_digits=3, decimal_places=1)
+    archetype_technical = serializers.DecimalField(max_digits=3, decimal_places=1)
+    archetype_force_control = serializers.DecimalField(max_digits=3, decimal_places=1)
+    archetype_force_sense = serializers.DecimalField(max_digits=3, decimal_places=1)
+    archetype_force_alter = serializers.DecimalField(max_digits=3, decimal_places=1)
 
     class Meta:
         model = Archetype

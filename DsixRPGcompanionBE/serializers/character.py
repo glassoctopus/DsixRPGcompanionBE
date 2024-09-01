@@ -5,6 +5,16 @@ from DsixRPGcompanionBE.serializers.skill_specialization import SkillSpecializat
 
 class CharacterSerializer(serializers.ModelSerializer):
     character_skills = CharacterSkillSerializer(many=True, read_only=True)
+    dexterity = serializers.DecimalField(max_digits=3, decimal_places=1)
+    knowledge = serializers.DecimalField(max_digits=3, decimal_places=1)
+    mechanical = serializers.DecimalField(max_digits=3, decimal_places=1)
+    perception = serializers.DecimalField(max_digits=3, decimal_places=1)
+    strength = serializers.DecimalField(max_digits=3, decimal_places=1)
+    technical = serializers.DecimalField(max_digits=3, decimal_places=1)
+    force_control = serializers.DecimalField(max_digits=3, decimal_places=1)
+    force_sense = serializers.DecimalField(max_digits=3, decimal_places=1)
+    force_alter = serializers.DecimalField(max_digits=3, decimal_places=1)
+
     class Meta:
         model = Character
         fields = ('id', 

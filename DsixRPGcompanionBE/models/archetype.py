@@ -23,9 +23,7 @@ class Archetype(models.Model):
     archetype_source = models.CharField(max_length=1369, null=True, blank=True)
 
     def clean(self):
-        # Check if the archetype is not for NPC
         if not self.archetype_for_NPC:
-            # Ensure that all fields except archetype_name are filled
             required_fields = [
                 'archetype_force_sensitive',
                 'archetype_dexterity',
