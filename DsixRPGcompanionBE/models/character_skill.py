@@ -4,6 +4,7 @@ from .skill import Skill
 
 class CharacterSkill(models.Model):
     character = models.ForeignKey(Character, on_delete=models.CASCADE, related_name='character_skills')
+    attribute = models.CharField(max_length=69)
     skill = models.ForeignKey(Skill, on_delete=models.CASCADE, related_name='skill_characters')
     skill_code = models.DecimalField(max_digits=3, decimal_places=1)
 

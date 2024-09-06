@@ -9,5 +9,5 @@ class CharacterSkillSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = CharacterSkill
-        fields = ('skill_name', 'skill_code', 'specializations')
+        fields = ('attribute', 'skill_name', 'skill_code', 'specializations')
         
