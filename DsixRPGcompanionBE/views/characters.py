@@ -93,21 +93,18 @@ class CharacterView(ViewSet):
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
     
-    #character skills below, need to see how to get rid of this csrf hack
-    @csrf_exempt
-    @require_http_methods(["POST"])
-    def add_skill_to_character(request):
-        """create a skill or list of skills and specilizations"""
+    @action(detail=False, methods=['post', 'patch'], url_path='add-or-update-character-skills')
+    def add_or_update_character_skills(self, request, *args, **kwargs):
+        """Create or update a batch of skills and their specializations for a character."""
         try:
-            data = json.loads(request.body)
+            data = request.data
 
-            # Ensure data is a list, even if it's a single item
             if isinstance(data, dict):
                 data = [data]
             elif not isinstance(data, list):
                 return HttpResponseBadRequest("Invalid input data. Expected a dictionary or a list of skills.")
 
-            created_character_skills = []
+            updated_skills = []
             errors = []
 
             for skill_data in data:
@@ -116,12 +113,11 @@ class CharacterView(ViewSet):
                     continue
 
                 character_id = skill_data.get('character')
-                skill_id = skill_data.get('skill')
                 skill_name = skill_data.get('skill_name')
                 skill_code = skill_data.get('skill_code')
                 specializations = skill_data.get('specializations', [])
 
-                if not character_id or not (skill_id or skill_name) or skill_code is None:
+                if not character_id or not skill_name or skill_code is None:
                     errors.append(f"Invalid data for skill: {skill_data}")
                     continue
 
@@ -132,65 +128,82 @@ class CharacterView(ViewSet):
                     continue
 
                 try:
-                    if skill_name:
-                        skill = Skill.objects.get(skill_name=skill_name)
-                    elif skill_id:
-                        skill = Skill.objects.get(id=skill_id)
-                    else:
-                        raise Skill.DoesNotExist
+                    skill = Skill.objects.get(skill_name=skill_name)
                 except Skill.DoesNotExist:
-                    errors.append(f"Skill with ID {skill_id} or name {skill_name} not found.")
+                    errors.append(f"Skill with name {skill_name} not found.")
                     continue
 
-                # Add or update the skill for the character
-                character_skill, created = CharacterSkill.objects.update_or_create(
-                    character=character,
-                    skill=skill,
-                    defaults={'skill_code': skill_code}
-                )
+                character_skill = None
 
-                # Create or update the skill specializations if applicable
-                if isinstance(specializations, list):
-                    for specialization in specializations:
-                        if not isinstance(specialization, dict):
-                            errors.append(f"Invalid data format for specialization: {specialization}")
-                            continue
-                        
-                        specialization_name = specialization.get('specialization_name')
-                        specialization_code = specialization.get('specialization_code')
+                if request.method == "POST":
+                    character_skill, created = CharacterSkill.objects.get_or_create(
+                        character=character,
+                        skill=skill,
+                        defaults={'skill_code': skill_code, 'attribute': skill.attribute}
+                    )
 
-                        if specialization_name:
-                            spec, spec_created = SkillSpecialization.objects.update_or_create(
-                                character_skill=character_skill,
-                                specialization_name=specialization_name,
-                                defaults={'specialization_code': specialization_code}
-                            )
+                    if not created:
+                        errors.append(f"Skill '{skill_name}' already exists for the character with ID {character_id}.")
+                        continue
 
-                created_character_skills.append({
-                    "character_skill_id": character_skill.id,
-                    "skill_id": skill.id,
-                    "skill_name": skill.skill_name,
-                    "skill_code": skill_code,
-                    "specializations": [
-                        {
-                            "specialization_id": spec.id,
-                            "specialization_name": spec.specialization_name,
-                            "specialization_code": spec.specialization_code
-                        }
-                        for spec in SkillSpecialization.objects.filter(character_skill=character_skill)
-                    ]
-                })
-                
+                elif request.method == "PUT":
+                    try:
+                        character_skill = CharacterSkill.objects.get(character=character, skill=skill)
+                        character_skill.skill_code = skill_code
+                        character_skill.save()
+                    except CharacterSkill.DoesNotExist:
+                        errors.append(f"Skill '{skill_name}' not found for character with ID {character_id}.")
+                        continue
+
+                # Handle specializations if provided
+                if character_skill:
+                    if isinstance(specializations, list):
+                        for specialization in specializations:
+                            if not isinstance(specialization, dict):
+                                errors.append(f"Invalid specialization format: {specialization}")
+                                continue
+
+                            specialization_name = specialization.get('specialization_name')
+                            specialization_code = specialization.get('specialization_code')
+
+                            if specialization_name:
+                                SkillSpecialization.objects.update_or_create(
+                                    character_skill=character_skill,
+                                    specialization_name=specialization_name,
+                                    defaults={'specialization_code': specialization_code}
+                                )
+
+                    # Append updated or created skill to response data
+                    updated_skills.append({
+                        "id": character_skill.id,
+                        "character": character_id,
+                        "skill": skill.id,
+                        "skill_name": skill.skill_name,
+                        "skill_code": character_skill.skill_code,
+                        "attribute": character_skill.attribute,
+                        "specializations": [
+                            {
+                                "id": spec.id,
+                                "specialization_name": spec.specialization_name,
+                                "specialization_code": spec.specialization_code
+                            }
+                            for spec in SkillSpecialization.objects.filter(character_skill=character_skill)
+                        ]
+                    })
+
             response_data = {
-                "message": f"Successfully added {len(created_character_skills)} skills to the character.",
-                "created_skills": created_character_skills
+                "message": f"Successfully processed {len(updated_skills)} skills for the character.",
+                "updated_skills": updated_skills
             }
             if errors:
                 response_data["errors"] = errors
-            return JsonResponse(response_data, status=201)
+
+            return JsonResponse(response_data, status=200 if request.method == "PATCH" else 201)
+
         except json.JSONDecodeError:
             return HttpResponseBadRequest("Invalid JSON format.")
         except Exception as e:
+            logger.error(f"Error processing request: {e}")
             return JsonResponse({"error": str(e)}, status=500)
     
     @action(detail=True, methods=['get'], url_path='skills')

@@ -23,6 +23,7 @@ from DsixRPGcompanionBE.views.skills import SkillView
 from DsixRPGcompanionBE.views.archetypes import ArchetypeView
 from DsixRPGcompanionBE.views.character_group import CharacterGroupView
 from DsixRPGcompanionBE.views.notes import NoteView
+from DsixRPGcompanionBE.views.csrf import csrf_view
 
 router = routers.DefaultRouter(trailing_slash=False)
 router.register(r'notes', NoteView, 'note')
@@ -36,7 +37,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('checkuser', check_user, name='checkuser'),
     path('register', register_user),
-    path('heros/character-skills', CharacterView.add_skill_to_character, name='add-skill-to-character'),
+    path('csrf-token/', csrf_view, name='csrf-token'),
+    path('heros/add-or-update-character-skills/', CharacterView.as_view({'post': 'add_or_update_character_skills', 'put': 'add_or_update_character_skills'}), name='add-or-update-character-skills'),
     path('heros/<int:pk>/update-skill-code/', CharacterView.as_view({'put': 'update_skill_code'}), name='update-skill-code'),
     path('heros/<int:pk>/skills/', CharacterView.as_view({'get': 'get_skills_for_character'}), name='get-character-skills'),
     path('heros/<int:character_id>/skills/<int:skill_id>/', CharacterView.as_view({'delete': 'remove_skill_from_character'})),
