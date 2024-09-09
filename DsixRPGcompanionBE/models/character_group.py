@@ -23,3 +23,8 @@ class CharacterGroup(models.Model):
         from .user import User  # Import the User model here
         self.clean()  # Call the clean method for validation
         super(CharacterGroup, self).save(*args, **kwargs)
+    
+    @property    
+    def user_handle(self):
+        return self.user.handle if self.user.handle else 'This is bad, all characters should have a user.'
+        
