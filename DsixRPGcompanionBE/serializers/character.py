@@ -14,16 +14,20 @@ class CharacterSerializer(serializers.ModelSerializer):
     force_control = serializers.DecimalField(max_digits=3, decimal_places=1)
     force_sense = serializers.DecimalField(max_digits=3, decimal_places=1)
     force_alter = serializers.DecimalField(max_digits=3, decimal_places=1)
+    user_handle = serializers.SerializerMethodField()
+    archetype_name = serializers.SerializerMethodField()
 
     class Meta:
         model = Character
         fields = ('id', 
                   'uid', 
-                  'user', 
+                  'user',
+                  'user_handle',
                   'NPC', 
                   'image', 
                   'name', 
-                  'archetype', 
+                  'archetype',
+                  'archetype_name',
                   'species', 
                   'homeworld', 
                   'gender', 
@@ -50,5 +54,11 @@ class CharacterSerializer(serializers.ModelSerializer):
                   'dark_side_points', 
                   'force_strength', 
                   'character_skills')
+          
+    def get_user_handle(self, obj):
+        return obj.user_handle
+    
+    def get_archetype_name(self, obj):
+        return obj.archetype_name
 
 

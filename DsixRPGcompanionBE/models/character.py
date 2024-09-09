@@ -40,3 +40,13 @@ class Character(models.Model):
     def __str__(self):
         return self.name
 
+    def character_header(self):
+        return f"{self.name} (UID: {self.uid}, Handle: {self.user_handle if self.user else 'No User'})"
+
+    @property
+    def user_handle(self):
+        return self.user.handle if self.user else 'No User'
+    
+    @property
+    def archetype_name(self):
+        return self.archetype.archetype_name if self.archetype else 'No Archetype'

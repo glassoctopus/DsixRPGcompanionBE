@@ -46,7 +46,7 @@ def register_user(request):
         bio=request.data['bio'],
         uid=request.data['uid'],
         handle=request.data['handle'],
-        game_master=request.data['gameMaster'],
+        game_master=request.data['game_master'],
         admin=request.data['admin']
     )
 
