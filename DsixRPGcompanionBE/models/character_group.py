@@ -26,5 +26,9 @@ class CharacterGroup(models.Model):
     
     @property    
     def user_handle(self):
-        return self.user.handle if self.user.handle else 'This is bad, all characters should have a user.'
+        return self.user.handle if self.user.handle else 'This is bad, all groups should have a user.'
+    
+    @property
+    def game_master_user_handle(self):
+        return self.game_master.handle if self.game_master else None
         
