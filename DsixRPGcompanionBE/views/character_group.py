@@ -49,7 +49,7 @@ class CharacterGroupView(ViewSet):
         except CharacterGroup.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
         character_group.delete()
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_200_OK)
     
     @action(detail=True, methods=['post'])
     def add_character(self, request, pk=None):

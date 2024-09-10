@@ -18,6 +18,7 @@ class CharacterGroupCharacterSerializer(serializers.ModelSerializer):
 class CharacterGroupSerializer(serializers.ModelSerializer):
     characters = CharacterGroupCharacterSerializer(many=True, read_only=True)
     user_handle = serializers.SerializerMethodField()
+    game_master_handle = serializers.SerializerMethodField()
     
     # for future Thomas: to access as writable fields, removing them from the payload, the telling django to process them as a relationship and not an id value.
     user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
@@ -25,7 +26,7 @@ class CharacterGroupSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = CharacterGroup
-        fields = ('id', 'user', 'user_handle', 'group_name', 'game_master', 'characters', 'private', 'is_adventure_party')
+        fields = ('id', 'user', 'user_handle', 'group_name', 'game_master', 'game_master_handle', 'characters', 'private', 'is_adventure_party')
 
     def create(self, validated_data):
         user = validated_data.pop('user')
@@ -36,3 +37,6 @@ class CharacterGroupSerializer(serializers.ModelSerializer):
     
     def get_user_handle(self, obj):
         return obj.user_handle
+
+    def get_game_master_handle(self, obj):
+        return obj.game_master_user_handle if obj.game_master_user_handle else 'No GM Assigned'
