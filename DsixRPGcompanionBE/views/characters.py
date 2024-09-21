@@ -93,7 +93,7 @@ class CharacterView(ViewSet):
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
     
-    @action(detail=False, methods=['post', 'patch'], url_path='add-or-update-character-skills')
+    @action(detail=False, methods=['post', 'put'], url_path='add-or-update-character-skills')
     def add_or_update_character_skills(self, request, *args, **kwargs):
         """Create or update a batch of skills and their specializations for a character."""
         try:
@@ -106,6 +106,9 @@ class CharacterView(ViewSet):
 
             updated_skills = []
             errors = []
+
+            # Print to debug the request method
+            print(f"Request method: {request.method}")  # Debug line
 
             for skill_data in data:
                 if not isinstance(skill_data, dict):
@@ -136,6 +139,8 @@ class CharacterView(ViewSet):
                 character_skill = None
 
                 if request.method == "POST":
+                    # Create logic: only create if method is POST
+                    print("Handling POST logic for creation")  # Debug line
                     character_skill, created = CharacterSkill.objects.get_or_create(
                         character=character,
                         skill=skill,
@@ -147,6 +152,8 @@ class CharacterView(ViewSet):
                         continue
 
                 elif request.method == "PUT":
+                    # Update logic: only update if method is PUT
+                    print("Handling PUT logic for updating")  # Debug line
                     try:
                         character_skill = CharacterSkill.objects.get(character=character, skill=skill)
                         character_skill.skill_code = skill_code
@@ -203,8 +210,8 @@ class CharacterView(ViewSet):
         except json.JSONDecodeError:
             return HttpResponseBadRequest("Invalid JSON format.")
         except Exception as e:
-            logger.error(f"Error processing request: {e}")
             return JsonResponse({"error": str(e)}, status=500)
+
     
     @action(detail=True, methods=['get'], url_path='skills')
     def get_skills_for_character(self, request, pk=None):

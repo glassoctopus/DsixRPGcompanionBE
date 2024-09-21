@@ -61,3 +61,4 @@ SELECT skill_name, COUNT(skill_name) as occurrences
 FROM DsixRPGcompanionBE_skill
 GROUP BY skill_name
 HAVING occurrences > 1;
+
