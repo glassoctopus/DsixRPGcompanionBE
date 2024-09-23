@@ -35,6 +35,7 @@ class Character(models.Model):
     a_quote = models.CharField(max_length=2369, null=True, blank=True)
     credits = models.IntegerField(default=0, null=True, blank=True)
     force_strength = models.DecimalField(max_digits=3, decimal_places=1, null=True, blank=True)
+    skill_points = models.IntegerField(default=0, null=True, blank=True)
     skills = models.ManyToManyField(Skill, through='CharacterSkill')
     
     def __str__(self):
