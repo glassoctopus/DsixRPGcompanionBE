@@ -6,3 +6,5 @@ from .skill_specialization import SkillSpecialization
 from .character_group import CharacterGroup
 from .user import User
 from .note import Note
+from .special_ability import SpecialAbility
+from .species import Species
