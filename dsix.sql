@@ -37,6 +37,9 @@ DELETE FROM sqlite_sequence WHERE name='DsixRPGcompanionBE_usergroup_characters'
 DELETE FROM DsixRPGcompanionBE_usergroup_users;
 DELETE FROM sqlite_sequence WHERE name='DsixRPGcompanionBE_usergroup_users';
 
+DELETE FROM DsixRPGcompanionBE_species;
+DELETE FROM sqlite_sequence WHERE name='DsixRPGcompanionBE_species';
+
 
 SELECT *
 
