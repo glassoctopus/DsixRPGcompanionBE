@@ -6,8 +6,8 @@ class Species(models.Model):
     image = models.CharField(max_length=223, null=True, blank=True)
     species_name = models.CharField(max_length=69, null=True, blank=True)
     species_homeworld = models.CharField(max_length=69, null=True, blank=True)
-    species_average_height = models.CharField(max_length=13, null=True, blank=True)
-    species_average_weight = models.CharField(max_length=13, null=True, blank=True)
+    species_average_height = models.DecimalField(max_digits=4, decimal_places=1, null=True, blank=True)
+    species_average_weight = models.DecimalField(max_digits=4, decimal_places=1, null=True, blank=True)
     species_force_sensitive = models.BooleanField(default=False, null=True, blank=True)
     species_dexterity = models.DecimalField(max_digits=3, decimal_places=1, null=True, blank=True)
     species_knowledge = models.DecimalField(max_digits=3, decimal_places=1, null=True, blank=True)
@@ -26,4 +26,4 @@ class Species(models.Model):
     species_force_strength = models.DecimalField(max_digits=3, decimal_places=1, null=True, blank=True)
     species_appeared_in = models.CharField(max_length=2369, null=True, blank=True)
     def __str__(self):
-        return self.name
+        return self.species_name

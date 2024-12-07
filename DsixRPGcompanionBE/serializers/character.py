@@ -5,6 +5,7 @@ from DsixRPGcompanionBE.serializers.skill_specialization import SkillSpecializat
 
 class CharacterSerializer(serializers.ModelSerializer):
     character_skills = CharacterSkillSerializer(many=True, read_only=True)
+    species_name = serializers.CharField(source='species.species_name', read_only=True)
     dexterity = serializers.DecimalField(max_digits=3, decimal_places=1)
     knowledge = serializers.DecimalField(max_digits=3, decimal_places=1)
     mechanical = serializers.DecimalField(max_digits=3, decimal_places=1)
@@ -28,7 +29,8 @@ class CharacterSerializer(serializers.ModelSerializer):
                   'name', 
                   'archetype',
                   'archetype_name',
-                  'species', 
+                  'species',
+                  'species_name',
                   'homeworld', 
                   'gender', 
                   'age', 

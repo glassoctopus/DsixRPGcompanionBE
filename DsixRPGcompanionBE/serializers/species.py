@@ -31,3 +31,5 @@ class SpeciesSerializer(serializers.ModelSerializer):
             'species_force_strength',
             'species_appeared_in'
         )
+
+

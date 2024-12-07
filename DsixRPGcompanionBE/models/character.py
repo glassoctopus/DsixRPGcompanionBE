@@ -1,5 +1,6 @@
 from django.db import models
 from .archetype import Archetype
+from .species import Species
 from .skill import Skill
 from .user import User
 
@@ -10,7 +11,7 @@ class Character(models.Model):
     image = models.CharField(max_length=223, null=True, blank=True)
     name = models.CharField(max_length=69, null=True, blank=True)
     archetype = models.ForeignKey(Archetype, on_delete=models.CASCADE, related_name='archetypes', null=True, blank=True)
-    species = models.CharField(max_length=69, null=True, blank=True)
+    species = models.ForeignKey(Species, on_delete=models.CASCADE, related_name='characters', null=True, blank=True)
     homeworld = models.CharField(max_length=69, null=True, blank=True)
     gender = models.CharField(max_length=13, null=True, blank=True)
     age = models.IntegerField(default=21, null=True, blank=True)
@@ -51,3 +52,7 @@ class Character(models.Model):
     @property
     def archetype_name(self):
         return self.archetype.archetype_name if self.archetype else 'No Archetype'
+    
+    @property
+    def species_name(self):
+        return self.species.species_name if self.species else 'No Species'
