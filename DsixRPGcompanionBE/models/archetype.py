@@ -1,5 +1,6 @@
 from django.core.exceptions import ValidationError
 from django.db import models
+from .species import Species
 
 class Archetype(models.Model):
     archetype_name = models.CharField(max_length=113)
@@ -19,6 +20,7 @@ class Archetype(models.Model):
     archetype_background = models.CharField(max_length=1369, blank=True)
     archetype_objectives = models.CharField(max_length=1369, blank=True)
     archetype_a_quote = models.CharField(max_length=1369, blank=True)
+    archetype_allowed_species = models.ManyToManyField('Species', blank=True, related_name='archetypes')
     archetype_game_notes = models.CharField(max_length=3666, null=True, blank=True)
     archetype_source = models.CharField(max_length=1369, null=True, blank=True)
 
@@ -52,3 +54,9 @@ class Archetype(models.Model):
 
     def __str__(self):
         return self.archetype_name
+    
+    def allowed_species(self, species_name):
+        """This is a design decesion that enforces canon and source archetypes that are species specific i.e. the Ewok archetypes in the first edition, but not covered in any rule sources"""
+        if not self.archetype_allowed_species.exists():
+            return True
+        return self.archetype_allowed_species.filter(species_name=species_name).exists()

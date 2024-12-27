@@ -1,5 +1,6 @@
 from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
+from rest_framework.decorators import action
 from rest_framework import status
 from rest_framework.exceptions import NotFound
 from DsixRPGcompanionBE.models import Species
@@ -65,3 +66,18 @@ class SpeciesView(ViewSet):
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Species.DoesNotExist:
             return Response({"error": "Species not found."}, status=status.HTTP_404_NOT_FOUND)
+    
+    @action(detail=False, methods=['get'], url_path='by_name')
+    def by_name(self, request):
+        """Retrieve a species by its name"""
+        species_name = request.query_params.get('name', None)
+        # print(f"Received query parameter 'name': {species_name}")
+        if not species_name:
+            return Response({"error": "Name parameter is required."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            species = Species.objects.get(species_name=species_name)
+            serializer = SpeciesSerializer(species)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Species.DoesNotExist:
+            raise NotFound(detail="Species not found.", code=status.HTTP_404_NOT_FOUND)
