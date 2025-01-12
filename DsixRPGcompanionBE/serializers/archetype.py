@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from DsixRPGcompanionBE.models.archetype import Archetype
 from DsixRPGcompanionBE.models.species import Species
+import uuid
 
 # TODO
 # class ArchetypeEquipmentSerializer(serializers.ModelSerializer):
@@ -9,20 +10,39 @@ from DsixRPGcompanionBE.models.species import Species
 #         fields = ('id', 'archetype', 'equipment', 'quantity')
 
 class SpeciesField(serializers.PrimaryKeyRelatedField):
-    queryset = Species.objects.all() 
-    
+    queryset = Species.objects.all()
+
     def to_internal_value(self, data):
-        if isinstance(data, str):  # if data is a string (species name)
-            species_obj, created = Species.objects.get_or_create(species_name=data)
+        if data is None:
+            return None
+
+        if isinstance(data, list):
+            resolved_species = []
+            for item in data:
+                resolved_species.append(self.process_species(item))
+            return resolved_species
+        
+        return self.process_species(data)
+
+    def process_species(self, item):
+        if isinstance(item, str):  # if item is a string (species name)
+            try:
+                species_obj = Species.objects.get(species_name=item)
+            except Species.DoesNotExist:
+                species_obj = Species(species_name=item, uid=uuid.uuid4())
+                species_obj.save()
             return species_obj
-        elif isinstance(data, int):  # if data is an integer (primary key)
-            return super().to_internal_value(data)
-        elif isinstance(data, Species):  # if data is an actual Species object
-            return data
+        elif isinstance(item, int):  # if item is an integer (primary key)
+            return item
+        elif isinstance(item, Species):  # if item is an actual Species object
+            return item.pk
         raise serializers.ValidationError("Invalid species data. It must be a string (species name), int (species id), or Species object.")
-    
+
     def to_representation(self, value):
-        return value.species_name  # represent as species name
+        if isinstance(value, list):
+            return [species.species_name for species in value]
+        return value.species_name
+
 
 class ArchetypeSerializer(serializers.ModelSerializer):
     # archetype_equipment = ArchetypeEquipmentSerializer(many=True, required=False)
@@ -60,7 +80,7 @@ class ArchetypeSerializer(serializers.ModelSerializer):
                   'archetype_allowed_species', 
                   'archetype_game_notes', 
                   'archetype_source')
-        
+            
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         if instance.archetype_allowed_species.exists():
@@ -72,38 +92,16 @@ class ArchetypeSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         # equipment_list = validated_data.pop('archetype_equipment', [])
         allowed_species = validated_data.pop('archetype_allowed_species', [])
-        archetype = Archetype.objects.create(**validated_data)
-        
-        resolved_species = []
-        for species in allowed_species:
-            if isinstance(species, Species):
-                resolved_species.append(species)
-            elif isinstance(species, int):
-                species_obj = Species.objects.get(pk=species)
-                resolved_species.append(species_obj)
-            elif isinstance(species, str):
-                species_obj, created = Species.objects.get_or_create(species_name=species)
-                resolved_species.append(species_obj)
-            
-        archetype.archetype_allowed_species.set(resolved_species)
+        archetype = Archetype.objects.create(**validated_data)        
+        archetype.archetype_allowed_species.set(allowed_species)
         # for piece in equipment_list:
         #     ArchetypeEquipment.objects.create(archetype=archetype, **piece)
         return archetype
     
     def update(self, instance, validated_data):
         allowed_species_data = validated_data.pop('archetype_allowed_species', None)
-        if allowed_species_data is not None:
-            resolved_species = []
-            for species in allowed_species_data:
-                if isinstance(species, Species):
-                    resolved_species.append(species)
-                elif isinstance(species, int):
-                    species_obj = Species.objects.get(pk=species)
-                    resolved_species.append(species_obj)
-                elif isinstance(species, str):
-                    species_obj, created = Species.objects.get_or_create(species_name=species)
-                    resolved_species.append(species_obj)            
-            instance.archetype_allowed_species.set(resolved_species)
+        if allowed_species_data is not None:     
+            instance.archetype_allowed_species.set(allowed_species_data)
             
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
