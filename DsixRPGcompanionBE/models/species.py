@@ -1,4 +1,6 @@
 from django.db import models
+from .skill import Skill
+from .ability import Ability
 
 class Species(models.Model):
     uid = models.CharField(max_length=113, unique=True)
@@ -20,10 +22,13 @@ class Species(models.Model):
     species_force_alter = models.DecimalField(max_digits=3, decimal_places=1, null=True, blank=True)
     species_force_points = models.DecimalField(max_digits=3, decimal_places=1, null=True, blank=True)
     species_dark_side_points = models.DecimalField(max_digits=3, decimal_places=1, null=True, blank=True)
+    species_skill = models.ManyToManyField('Skill', blank=True, related_name='species')
+    species_ability = models.ManyToManyField('Ability', blank=True, related_name='species')
     species_physical_description = models.CharField(max_length=2369, null=True, blank=True)
     species_personality = models.CharField(max_length=2369, null=True, blank=True)
     species_background = models.CharField(max_length=2369, null=True, blank=True)
     species_force_strength = models.DecimalField(max_digits=3, decimal_places=1, null=True, blank=True)
     species_appeared_in = models.CharField(max_length=2369, null=True, blank=True)
+    
     def __str__(self):
         return self.species_name

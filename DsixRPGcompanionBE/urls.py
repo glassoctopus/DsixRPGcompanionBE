@@ -22,7 +22,7 @@ from DsixRPGcompanionBE.views.characters import CharacterView
 from DsixRPGcompanionBE.views.skills import SkillView
 from DsixRPGcompanionBE.views.archetypes import ArchetypeView
 from DsixRPGcompanionBE.views.character_group import CharacterGroupView
-from DsixRPGcompanionBE.views.special_ability import SpecialAbilityView
+from DsixRPGcompanionBE.views.ability import AbilityView
 from DsixRPGcompanionBE.views.species import SpeciesView
 from DsixRPGcompanionBE.views.notes import NoteView
 from DsixRPGcompanionBE.views.csrf import csrf_view
@@ -34,7 +34,7 @@ router.register(r'heros', CharacterView, 'hero')
 router.register(r'skills', SkillView, 'skill')
 router.register(r'species', SpeciesView, basename='species')
 router.register(r'archetypes', ArchetypeView, 'archetype')
-router.register(r'specialabilities', SpecialAbilityView, 'specialabilities')
+router.register(r'abilities', AbilityView, 'abilities')
 router.register(r'charactergroups', CharacterGroupView, basename='charactergroup')
 
 urlpatterns = [
