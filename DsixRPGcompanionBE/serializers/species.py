@@ -25,6 +25,8 @@ class SpeciesSerializer(serializers.ModelSerializer):
             'species_force_alter',
             'species_force_points',
             'species_dark_side_points',
+            'species_skill',
+            'species_ability',
             'species_physical_description',
             'species_personality',
             'species_background',
