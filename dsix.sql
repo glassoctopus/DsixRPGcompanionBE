@@ -5,6 +5,9 @@
 DELETE FROM DsixRPGcompanionBE_user;
 DELETE FROM sqlite_sequence WHERE name='DsixRPGcompanionBE_user';
 
+DELETE FROM DsixRPGcompanionBE_ability;
+DELETE FROM sqlite_sequence WHERE name='DsixRPGcompanionBE_ability';
+
 DELETE FROM DsixRPGcompanionBE_archetype;
 DELETE FROM sqlite_sequence WHERE name='DsixRPGcompanionBE_archetype';
 
@@ -23,16 +26,11 @@ DELETE FROM sqlite_sequence WHERE name='DsixRPGcompanionBE_skillspecialization';
 DELETE FROM DDsixRPGcompanionBE_charactergroup;
 DELETE FROM sqlite_sequence WHERE name='DDsixRPGcompanionBE_charactergroup';
 
-DELETE FROM DsixRPGcompanionBE_charactergroup_characters;
-DELETE FROM sqlite_sequence WHERE name='DsixRPGcompanionBE_charactergroup_characters';
-
-
 DELETE FROM DsixRPGcompanionBE_usergroup;
 DELETE FROM sqlite_sequence WHERE name='DsixRPGcompanionBE_usergroup';
 
 DELETE FROM DsixRPGcompanionBE_usergroup_characters;
 DELETE FROM sqlite_sequence WHERE name='DsixRPGcompanionBE_usergroup_characters';
-
 
 DELETE FROM DsixRPGcompanionBE_usergroup_users;
 DELETE FROM sqlite_sequence WHERE name='DsixRPGcompanionBE_usergroup_users';

@@ -63,7 +63,7 @@ class SpeciesView(ViewSet):
             species = Species.objects.get(pk=pk)
             serializer = SpeciesSerializer(species)
             species.delete()
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response({"deleted": f"Species {serializer.data} was successfully deleted."}, status=status.HTTP_204_NO_CONTENT)
         except Species.DoesNotExist:
             return Response({"error": "Species not found."}, status=status.HTTP_404_NOT_FOUND)
     
