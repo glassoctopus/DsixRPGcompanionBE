@@ -26,13 +26,13 @@ class SkillField(serializers.PrimaryKeyRelatedField):
     queryset = Skill.objects.all()
 
     def to_internal_value(self, data):
-        if isinstance(data, dict):  # If a dict is provided, check or create the Skill
+        if isinstance(data, dict):
             skill_name = data.get("skill_name")
             if skill_name:
                 skill, created = Skill.objects.get_or_create(skill_name=skill_name, defaults=data)
                 return skill
             raise serializers.ValidationError("Skill dictionary must include 'skill_name'.")
-        elif isinstance(data, int):  # If an ID is provided, validate it
+        elif isinstance(data, int):
             try:
                 return Skill.objects.get(pk=data)
             except Skill.DoesNotExist:
@@ -87,7 +87,7 @@ class SpeciesSerializer(serializers.ModelSerializer):
         from DsixRPGcompanionBE.serializers.ability import AbilitySerializer
         from DsixRPGcompanionBE.serializers.skill import SkillSerializer
 
-        species = Species.objects.create(**validated_data) # like gawd, created a whole species
+        species = Species.objects.create(**validated_data)
 
         for ability_data in abilities_data:
             if isinstance(ability_data, Ability): #single ability
@@ -95,7 +95,7 @@ class SpeciesSerializer(serializers.ModelSerializer):
                 ability, created = Ability.objects.get_or_create(
                     ability_name=ability_name, defaults={'ability_name': ability_name}
                 )
-                ability.species = species #assign it to the speices just created
+                ability.species = species
                 ability.save()
             else: #dict of abilites
                 ability_name = ability_data.get('ability_name')

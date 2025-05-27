@@ -14,6 +14,7 @@ class Ability(models.Model):
     ability_game_notes = models.CharField(max_length=3666, null=True, blank=True)
     ability_code = models.DecimalField(max_digits=3, decimal_places=1)
     ability_source = models.CharField(max_length=1369, null=True, blank=True)
+    home_brew = models.BooleanField(default=False)
     
     def __str__(self):
         return f"{self.skill_name} (code {self.skill_code})"

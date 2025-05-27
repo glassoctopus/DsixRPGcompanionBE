@@ -5,14 +5,20 @@
 DELETE FROM DsixRPGcompanionBE_user;
 DELETE FROM sqlite_sequence WHERE name='DsixRPGcompanionBE_user';
 
-DELETE FROM DsixRPGcompanionBE_ability;
-DELETE FROM sqlite_sequence WHERE name='DsixRPGcompanionBE_ability';
-
 DELETE FROM DsixRPGcompanionBE_archetype;
 DELETE FROM sqlite_sequence WHERE name='DsixRPGcompanionBE_archetype';
 
+DELETE FROM DsixRPGcompanionBE_archetype_archetype_allowed_species;
+DELETE FROM sqlite_sequence WHERE name='DsixRPGcompanionBE_archetype_archetype_allowed_species';
+
 DELETE FROM DsixRPGcompanionBE_character;
 DELETE FROM sqlite_sequence WHERE name='DsixRPGcompanionBE_character';
+
+DELETE FROM DsixRPGcompanionBE_species;
+DELETE FROM sqlite_sequence WHERE name='DsixRPGcompanionBE_species';
+
+DELETE FROM DsixRPGcompanionBE_ability;
+DELETE FROM sqlite_sequence WHERE name='DsixRPGcompanionBE_ability';
 
 DELETE FROM DsixRPGcompanionBE_skill;
 DELETE FROM sqlite_sequence WHERE name='DsixRPGcompanionBE_skill';
@@ -35,8 +41,6 @@ DELETE FROM sqlite_sequence WHERE name='DsixRPGcompanionBE_usergroup_characters'
 DELETE FROM DsixRPGcompanionBE_usergroup_users;
 DELETE FROM sqlite_sequence WHERE name='DsixRPGcompanionBE_usergroup_users';
 
-DELETE FROM DsixRPGcompanionBE_species;
-DELETE FROM sqlite_sequence WHERE name='DsixRPGcompanionBE_species';
 
 
 SELECT *
