@@ -4,9 +4,9 @@ from rest_framework import serializers, status
 from rest_framework.exceptions import NotFound
 from DsixRPGcompanionBE.models import Archetype
 from DsixRPGcompanionBE.serializers.archetype import ArchetypeSerializer
-
+from DsixRPGcompanionBE.audit.services import AuditService
    
-class ArchetypeView(ViewSet):
+class ArchetypeViewSet(ViewSet):
     """Archetype viewset, CRUD"""
     def create(self, request, *args, **kwargs):
         data = request.data
@@ -20,6 +20,13 @@ class ArchetypeView(ViewSet):
                 if serializer.is_valid():
                     archetype = serializer.save()
                     created_archetypes.append(serializer.data)
+                    AuditService.log(
+                    action='CREATE',
+                    content_object=archetype,
+                    request=request,
+                    old_data=None,
+                    new_data=serializer.data
+                )
                 else:
                     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
             how_many = len(created_archetypes)
@@ -27,7 +34,14 @@ class ArchetypeView(ViewSet):
         else:
             serializer = ArchetypeSerializer(data=data)
             if serializer.is_valid():
-                serializer.save()
+                archetype = serializer.save()
+                AuditService.log(
+                    action='CREATE',
+                    content_object=archetype,
+                    request=request,
+                    old_data=None,
+                    new_data=serializer.data
+                )
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
@@ -52,18 +66,41 @@ class ArchetypeView(ViewSet):
         """Update an Archetype"""
         try:
             archetype = Archetype.objects.get(pk=pk)
+            # capture previous update if any
+            old_serializer = ArchetypeSerializer(archetype)
+            old_data = old_serializer.data
+            
             serializer = ArchetypeSerializer(archetype, data=request.data, partial=True)
             if serializer.is_valid():
-                serializer.save()
+                updated_archetype = serializer.save()
+                AuditService.log(
+                    action='UPDATE',
+                    content_object=updated_archetype,
+                    request=request,
+                    old_data=old_data,
+                    new_data=serializer.data
+                )
                 return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Archetype.DoesNotExist:
-            return Response({"error": "Archtype not found."}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "Archetype not found."}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
         
     def destroy(self, request, pk):
         """Delete an Archetype"""
         archetype = Archetype.objects.get(pk=pk)
+        
+        serializer = ArchetypeSerializer(archetype)
+        old_data = serializer.data
+        
+        # Log before deleting
+        AuditService.log(
+            action='DELETE',
+            content_object=archetype,
+            request=request,
+            old_data=old_data,
+            new_data=None
+        )
         archetype.delete()
         return Response(None, status=status.HTTP_204_NO_CONTENT)

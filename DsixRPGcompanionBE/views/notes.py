@@ -5,7 +5,7 @@ from rest_framework import serializers, status
 from DsixRPGcompanionBE.models.note import Note
 from DsixRPGcompanionBE.serializers.note import NoteSerializer
 
-class NoteView(ViewSet):
+class NoteViewSet(ViewSet):
     def retrieve(self, request, pk):
         try:
             note = Note.objects.get(pk=pk)

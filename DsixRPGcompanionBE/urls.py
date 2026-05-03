@@ -15,40 +15,42 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from DsixRPGcompanionBE.views.auth import register_user, check_user
 from rest_framework import routers
-from DsixRPGcompanionBE.views.users import UserView
-from DsixRPGcompanionBE.views.characters import CharacterView
-from DsixRPGcompanionBE.views.skills import SkillView
-from DsixRPGcompanionBE.views.archetypes import ArchetypeView
-from DsixRPGcompanionBE.views.character_group import CharacterGroupView
-from DsixRPGcompanionBE.views.ability import AbilityView
-from DsixRPGcompanionBE.views.species import SpeciesView
-from DsixRPGcompanionBE.views.notes import NoteView
+from DsixRPGcompanionBE.views.ability import AbilityViewSet
+from DsixRPGcompanionBE.views.archetypes import ArchetypeViewSet
+from DsixRPGcompanionBE.views.audit_log import AuditLogViewSet
+from DsixRPGcompanionBE.views.auth import register_user, check_user
+from DsixRPGcompanionBE.views.character_group import CharacterGroupViewSet
+from DsixRPGcompanionBE.views.characters import CharacterViewSet
 from DsixRPGcompanionBE.views.csrf import csrf_view
+from DsixRPGcompanionBE.views.notes import NoteViewSet
+from DsixRPGcompanionBE.views.skills import SkillViewSet
+from DsixRPGcompanionBE.views.species import SpeciesViewSet
+from DsixRPGcompanionBE.views.users import UserViewSet
 
 router = routers.DefaultRouter()
-router.register(r'notes', NoteView, 'note')
-router.register(r'users', UserView, 'user')
-router.register(r'heros', CharacterView, 'hero')
-router.register(r'skills', SkillView, 'skill')
-router.register(r'species', SpeciesView, basename='species')
-router.register(r'archetypes', ArchetypeView, 'archetype')
-router.register(r'abilities', AbilityView, 'abilities')
-router.register(r'charactergroups', CharacterGroupView, basename='charactergroup')
+router.register(r'notes', NoteViewSet, 'note')
+router.register(r'users', UserViewSet, 'user')
+router.register(r'heros', CharacterViewSet, 'hero')
+router.register(r'skills', SkillViewSet, 'skill')
+router.register(r'species', SpeciesViewSet, basename='species')
+router.register(r'archetypes', ArchetypeViewSet, 'archetype')
+router.register(r'abilities', AbilityViewSet, 'abilities')
+router.register(r'charactergroups', CharacterGroupViewSet, basename='charactergroup')
+router.register(r'audit-logs', AuditLogViewSet, basename='auditlog')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('checkuser', check_user, name='checkuser'),
     path('register', register_user),
     path('csrf-token/', csrf_view, name='csrf-token'),
-    path('heros/add-or-update-character-skills/', CharacterView.as_view({'post': 'add_or_update_character_skills', 'put': 'add_or_update_character_skills'}), name='add-or-update-character-skills'),
-    path('heros/<int:pk>/update-skill-code/', CharacterView.as_view({'put': 'update_skill_code'}), name='update-skill-code'),
-    path('heros/<int:pk>/skills/', CharacterView.as_view({'get': 'get_skills_for_character'}), name='get-character-skills'),
-    path('heros/<int:character_id>/skills/<int:skill_id>/', CharacterView.as_view({'delete': 'remove_skill_from_character'})),
-    path('charactergroups/<int:pk>/add_character/', CharacterGroupView.as_view({'post': 'add_character'}), name='charactergroup-add-character'),
-    path('charactergroups/<int:pk>/add_characters/', CharacterGroupView.as_view({'post': 'add_characters'}), name='charactergroup-add-characters'),
-    path('charactergroups/<int:pk>/remove_character/', CharacterGroupView.as_view({'post': 'remove_character'}), name='charactergroup-remove-character'),
-    path('charactergroups/<int:pk>/remove_characters/', CharacterGroupView.as_view({'post': 'remove_characters'}), name='charactergroup-remove-characters'),
+    path('heros/add-or-update-character-skills/', CharacterViewSet.as_view({'post': 'add_or_update_character_skills', 'put': 'add_or_update_character_skills'}), name='add-or-update-character-skills'),
+    path('heros/<int:pk>/update-skill-code/', CharacterViewSet.as_view({'put': 'update_skill_code'}), name='update-skill-code'),
+    path('heros/<int:pk>/skills/', CharacterViewSet.as_view({'get': 'get_skills_for_character'}), name='get-character-skills'),
+    path('heros/<int:character_id>/skills/<int:skill_id>/', CharacterViewSet.as_view({'delete': 'remove_skill_from_character'})),
+    path('charactergroups/<int:pk>/add_character/', CharacterGroupViewSet.as_view({'post': 'add_character'}), name='charactergroup-add-character'),
+    path('charactergroups/<int:pk>/add_characters/', CharacterGroupViewSet.as_view({'post': 'add_characters'}), name='charactergroup-add-characters'),
+    path('charactergroups/<int:pk>/remove_character/', CharacterGroupViewSet.as_view({'post': 'remove_character'}), name='charactergroup-remove-character'),
+    path('charactergroups/<int:pk>/remove_characters/', CharacterGroupViewSet.as_view({'post': 'remove_characters'}), name='charactergroup-remove-characters'),
     path('', include(router.urls)),
 ]

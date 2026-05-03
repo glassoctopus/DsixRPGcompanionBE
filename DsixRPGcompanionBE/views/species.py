@@ -6,7 +6,7 @@ from rest_framework.exceptions import NotFound
 from DsixRPGcompanionBE.models import Species
 from DsixRPGcompanionBE.serializers.species import SpeciesSerializer
 
-class SpeciesView(ViewSet):
+class SpeciesViewSet(ViewSet):
     """Species API endpoint for CRUD"""
 
     def create(self, request):

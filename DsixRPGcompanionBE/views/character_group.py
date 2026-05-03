@@ -5,7 +5,7 @@ from rest_framework.viewsets import ViewSet
 from DsixRPGcompanionBE.models import CharacterGroup, Character, User
 from DsixRPGcompanionBE.serializers import CharacterGroupSerializer
         
-class CharacterGroupView(ViewSet):
+class CharacterGroupViewSet(ViewSet):
     """CRUD on User Groups, and anccilary features for manipulating group elements"""
 
     def create(self, request):
