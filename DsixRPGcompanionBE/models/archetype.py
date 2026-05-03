@@ -6,6 +6,8 @@ class Archetype(models.Model):
     archetype_name = models.CharField(max_length=113)
     archetype_for_NPC = models.BooleanField(default=False)
     archetype_force_sensitive = models.BooleanField(default=False, blank=True)
+    archetype_playable = models.BooleanField(default=True, blank=False)
+    archetype_imperial = models.BooleanField(default=False, blank=True)
     archetype_dexterity = models.DecimalField(max_digits=3, decimal_places=1, null=True, blank=True)
     archetype_knowledge = models.DecimalField(max_digits=3, decimal_places=1, null=True, blank=True)
     archetype_mechanical = models.DecimalField(max_digits=3, decimal_places=1, null=True, blank=True)

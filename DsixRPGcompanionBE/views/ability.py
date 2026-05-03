@@ -4,10 +4,12 @@ from rest_framework import status
 from rest_framework.exceptions import NotFound
 from DsixRPGcompanionBE.models import Ability
 from DsixRPGcompanionBE.serializers.ability import AbilitySerializer
+from DsixRPGcompanionBE.audit.decorators import auto_audit
 
-class AbilityView(ViewSet):
+class AbilityViewSet(ViewSet):
     """Ability API endpoint for CRUD"""
 
+    @auto_audit('CREATE')
     def create(self, request):
         """Create a new ability"""
         data = request.data

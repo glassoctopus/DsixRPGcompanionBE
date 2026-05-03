@@ -27,3 +27,11 @@ sample user
 -Create a Character, or many
 -Group characters in private groups or in public groups with other users
 -Create an adventure party with a game master
+
+
+
+To start, download both the backend and front end. Make sure you have the needed installed for django on your system, and react. 
+Once all is installed and downloaded to start the backend(I always start it first) with command:
+python manage.py runserver 
+(depending on your python enviornment, then see the follow the instructions for the front end.)
+

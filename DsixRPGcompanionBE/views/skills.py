@@ -8,7 +8,7 @@ from DsixRPGcompanionBE.models import Skill, SkillSpecialization
 from DsixRPGcompanionBE.serializers.skill import SkillSerializer
 
                 
-class SkillView(ViewSet):
+class SkillViewSet(ViewSet):
     """skill API endpoint for CRUD"""
     def create(self, request, *args, **kwargs):
         data = request.data

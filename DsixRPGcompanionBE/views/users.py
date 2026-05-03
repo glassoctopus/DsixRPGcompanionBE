@@ -5,17 +5,7 @@ from rest_framework import serializers, status
 from DsixRPGcompanionBE.models import User
 from django.utils import timezone
 
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ('uid', 'id', 'handle', 'bio', 'game_master', 'admin')
-
-def get_current_date_formatted():
-    """helper time/date stamp"""
-    current_date = timezone.now().date()
-    return current_date.strftime('%Y-%m-%d')
-
-class UserView(ViewSet):
+class UserViewSet(ViewSet):
     """User view for simple to-do list"""
     
     def retrieve(self, request, pk):

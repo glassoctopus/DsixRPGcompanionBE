@@ -15,7 +15,7 @@ from DsixRPGcompanionBE.serializers.character import CharacterSerializer
 from DsixRPGcompanionBE.serializers.character_skill import CharacterSkillSerializer
 import json
 
-class CharacterView(ViewSet): 
+class CharacterViewSet(ViewSet): 
     
     def create(self, request, *args, **kwargs):
         """POST / Create hero(s)"""
