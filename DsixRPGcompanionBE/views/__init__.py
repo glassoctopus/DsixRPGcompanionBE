@@ -1,9 +1,8 @@
 
-from .ability import AbilityViewSet
+from .abilities import AbilityViewSet
 from .archetypes import ArchetypeViewSet
-from .audit_log import AuditLogViewSet
-from .auth import check_user
-from .character_group import CharacterGroupViewSet
+from .audit_logs import AuditLogViewSet
+from .character_groups import CharacterGroupViewSet
 from .characters import CharacterViewSet
 from .notes import NoteViewSet
 from .skills import SkillViewSet

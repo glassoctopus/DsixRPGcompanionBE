@@ -16,13 +16,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
-from DsixRPGcompanionBE.views.ability import AbilityViewSet
+from DsixRPGcompanionBE.views.auth import LoginAPIView, RegisterAPIView, UserAPIView, LogoutAPIView, SessionStatusAPIView
+from DsixRPGcompanionBE.views.abilities import AbilityViewSet
 from DsixRPGcompanionBE.views.archetypes import ArchetypeViewSet
-from DsixRPGcompanionBE.views.audit_log import AuditLogViewSet
-from DsixRPGcompanionBE.views.auth import register_user, check_user
-from DsixRPGcompanionBE.views.character_group import CharacterGroupViewSet
+from DsixRPGcompanionBE.views.audit_logs import AuditLogViewSet
+from DsixRPGcompanionBE.views.character_groups import CharacterGroupViewSet
 from DsixRPGcompanionBE.views.characters import CharacterViewSet
-from DsixRPGcompanionBE.views.csrf import csrf_view
 from DsixRPGcompanionBE.views.notes import NoteViewSet
 from DsixRPGcompanionBE.views.skills import SkillViewSet
 from DsixRPGcompanionBE.views.species import SpeciesViewSet
@@ -41,9 +40,11 @@ router.register(r'audit-logs', AuditLogViewSet, basename='auditlog')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('checkuser', check_user, name='checkuser'),
-    path('register', register_user),
-    path('csrf-token/', csrf_view, name='csrf-token'),
+    path('api/login/', LoginAPIView.as_view(), name='login'),
+    path('api/register/', RegisterAPIView.as_view(), name='register'),
+    path('api/logout/', LogoutAPIView.as_view(), name='logout'),
+    path('api/session-status/', SessionStatusAPIView.as_view(), name='session-status'),
+    path('api/user/', UserAPIView.as_view(), name='user'),
     path('heros/add-or-update-character-skills/', CharacterViewSet.as_view({'post': 'add_or_update_character_skills', 'put': 'add_or_update_character_skills'}), name='add-or-update-character-skills'),
     path('heros/<int:pk>/update-skill-code/', CharacterViewSet.as_view({'put': 'update_skill_code'}), name='update-skill-code'),
     path('heros/<int:pk>/skills/', CharacterViewSet.as_view({'get': 'get_skills_for_character'}), name='get-character-skills'),

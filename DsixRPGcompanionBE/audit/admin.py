@@ -6,7 +6,7 @@ class AuditLogAdmin(admin.ModelAdmin):
     list_display = ['timestamp', 'get_source_type_display', 'get_action_display', 'user', 'object_id']
     list_filter = ['source_type', 'action', 'timestamp']
     search_fields = ['user__username', 'object_id']
-    readonly_fields = ['id', 'source_type', 'action', 'user', 'timestamp', 'request_meta', 'old_data', 'new_data']
+    readonly_fields = ['id', 'source_type', 'payload_type', 'action', 'user', 'timestamp', 'request_meta', 'old_data', 'new_data']
     
     def has_add_permission(self, request):
         return False

@@ -1,14 +1,34 @@
 from django.contrib.contenttypes.models import ContentType
 from DsixRPGcompanionBE.models.audit_log import AuditLog
 from DsixRPGcompanionBE.audit.middleware import AuditContext
-from decimal import Decimal
-import json
 from django.core.serializers.json import DjangoJSONEncoder
+import json
 
 class AuditService:
     @staticmethod
-    def log(action, content_object, request=None, old_data=None, new_data=None):
-        source_type = AuditContext.get_source_type(request)
+    def log(action, content_object, request=None, old_data=None, new_data=None, override_source_type=None, override_payload_type=None):
+        print(f"\n=== AuditService.log called ===")
+        print(f"action: {action}")
+        print(f"content_object: {content_object}")
+        print(f"request: {request}")
+        print(f"override_source_type: {override_source_type}")
+        
+        if override_source_type:
+            source_type = override_source_type
+            print(f"source_type (from override): {source_type}")
+        else:
+            source_type = AuditContext.get_source_type(request)
+            print(f"source_type (from AuditContext): {source_type}")
+            
+        if override_payload_type:
+            payload_type = override_payload_type
+        else:
+            # Default to SINGLE_ENTRY_ACTION if not specified
+            payload_type = AuditLog.SingleOrBulk.SINGLE_ENTRY_ACTION
+        
+        print(f"request.user: {request.user if request else 'No request'}")
+        print(f"request.user.is_authenticated: {request.user.is_authenticated if request and request.user else 'N/A'}")
+        print(f"request.META.get('HTTP_USER_AGENT'): {request.META.get('HTTP_USER_AGENT') if request else 'N/A'}")
         
         # Convert Decimal to float or string for JSON serialization
         old_data_serialized = AuditService._serialize_data(old_data)
@@ -19,6 +39,7 @@ class AuditService:
             content_object=content_object,
             action=action.lower(),
             source_type=source_type,
+            payload_type=payload_type,
             user=request.user if request and request.user.is_authenticated else None,
             request_meta={
                 'ip': AuditService._get_client_ip(request),
