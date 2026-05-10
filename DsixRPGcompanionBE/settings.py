@@ -10,22 +10,31 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
-import os
-import json
+import environ
 from pathlib import Path
-from dotenv import load_dotenv
-load_dotenv()
 
+# Initialize environ
+env = environ.Env()
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+# Set up the base directory
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost').split(',')
+# Read the .env file
+environ.Env.read_env(BASE_DIR / '.env')
 
-DEBUG = os.getenv('DEBUG', 'False') == 'True'
+# Use env variables with type casting 
+SECRET_KEY = env('SECRET_KEY')
+DEBUG = env.bool('DEBUG', default=False)  # Converts to boolean automatically
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=[])
+
+# Database
+# https://docs.djangoproject.com/en/4.1/ref/settings/#databases
+DATABASES = {
+    'default': env.db(),  # Parses the DATABASE_URL from your .env file
+}
+
+AUTH_USER_MODEL = 'DsixRPGcompanionBE.User'
 
 # Application definition
 
@@ -36,19 +45,24 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_extensions',
     'rest_framework',
     'corsheaders',
     'DsixRPGcompanionBE'
 ]
 
 REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+    ],
     'COERCE_DECIMAL_TO_STRING': False,
 }
 
-CORS_ORIGIN_WHITELIST = (
-    'http://localhost:3000',
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
     'http://127.0.0.1:3000',
-)
+]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -84,29 +98,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'DsixRPGcompanionBE.wsgi.application'
-
-
-# Database
-# https://docs.djangoproject.com/en/4.1/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DATABASE_NAME', 'swd6companion'),
-        'USER': os.getenv('DATABASE_USER', 'postgres'),
-        'PASSWORD': os.getenv('DATABASE_PASSWORD', '1234bookface'),
-        'HOST': os.getenv('DATABASE_HOST', '127.0.0.1'),
-        'PORT': os.getenv('DATABASE_PORT', '5432'),
-        'OPTIONS': {
-            'connect_timeout': 5,  # 5 seconds timeout
-        },
-    }
-}
-# database connection populated with .env
-
-ALLOWED_HOSTS = json.loads(os.getenv('ALLOWED_HOSTS', '[]'))
-
-SECRET_KEY = os.getenv('SECRET_KEY', '')
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
