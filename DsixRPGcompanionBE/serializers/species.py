@@ -44,8 +44,8 @@ class SkillField(serializers.PrimaryKeyRelatedField):
 
 
 class SpeciesSerializer(serializers.ModelSerializer):
-    species_abilities = AbilityField(many=True, required=False)
-    species_skills = SkillField(many=True, required=False)
+    abilities = AbilityField(many=True, required=False)
+    skills = SkillField(many=True, required=False)
 
     class Meta:
         model = Species
@@ -54,34 +54,34 @@ class SpeciesSerializer(serializers.ModelSerializer):
             'uid',
             'playable',
             'image',
-            'species_name',
-            'species_homeworld',
-            'species_average_height',
-            'species_average_weight',
-            'species_force_sensitive',
-            'species_dexterity',
-            'species_knowledge',
-            'species_mechanical',
-            'species_perception',
-            'species_strength',
-            'species_technical',
-            'species_force_control',
-            'species_force_sense',
-            'species_force_alter',
-            'species_force_points',
-            'species_dark_side_points',
-            'species_abilities',
-            'species_skills',
-            'species_physical_description',
-            'species_personality',
-            'species_background',
-            'species_force_strength',
-            'species_appeared_in',
+            'name',
+            'homeworld',
+            'average_height',
+            'average_weight',
+            'force_sensitive',
+            'dexterity',
+            'knowledge',
+            'mechanical',
+            'perception',
+            'strength',
+            'technical',
+            'force_control',
+            'force_sense',
+            'force_alter',
+            'force_points',
+            'dark_side_points',
+            'abilities',
+            'skills',
+            'physical_description',
+            'personality',
+            'background',
+            'force_strength',
+            'appeared_in',
         )
 
     def create(self, validated_data):
-        abilities_data = validated_data.pop('species_abilities', [])
-        skills_data = validated_data.pop('species_skills', [])
+        abilities_data = validated_data.pop('abilities', [])
+        skills_data = validated_data.pop('skills', [])
 
         # Lazy imports here to avoid circular dependency during the initial loading phase
         from DsixRPGcompanionBE.serializers.ability import AbilitySerializer
@@ -126,15 +126,15 @@ class SpeciesSerializer(serializers.ModelSerializer):
         return species
 
     def update(self, instance, validated_data):
-        abilities_data = validated_data.pop('species_abilities', None)
-        skills_data = validated_data.pop('species_skills', None)
+        abilities_data = validated_data.pop('abilities', None)
+        skills_data = validated_data.pop('skills', None)
 
         # Lazy imports here to avoid circular dependency during the initial loading phase
         from DsixRPGcompanionBE.serializers.ability import AbilitySerializer
         from DsixRPGcompanionBE.serializers.skill import SkillSerializer
 
         if abilities_data is not None:
-            instance.species_abilities.clear()  
+            instance.abilities.clear()  
             for ability_data in abilities_data:
                 if isinstance(ability_data, Ability):
                     ability_name = ability_data.ability_name
@@ -153,7 +153,7 @@ class SpeciesSerializer(serializers.ModelSerializer):
                         ability.save()
 
         if skills_data is not None:
-            instance.species_skills.clear()
+            instance.skills.clear()
             for skill_data in skills_data:
                 if isinstance(skill_data, Skill):
                     skill_name = skill_data.skill_name

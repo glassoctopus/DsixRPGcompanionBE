@@ -9,7 +9,7 @@ class NameOfSpeciesOfSkill(serializers.ModelSerializer):
 
 class SkillSerializer(serializers.ModelSerializer):
     """super serial"""
-    skill_code = serializers.DecimalField(max_digits=2, decimal_places=1, coerce_to_string=False)
+    code = serializers.DecimalField(max_digits=2, decimal_places=1, coerce_to_string=False)
     species = NameOfSpeciesOfSkill(read_only=True)
     species_name = serializers.CharField(source='species.species_name', read_only=True)
 
@@ -17,7 +17,7 @@ class SkillSerializer(serializers.ModelSerializer):
         model = Skill
         fields = ('id',                  
                   'attribute', 
-                  'skill_name', 
+                  'name', 
                   'time_taken', 
                   'is_a_reaction', 
                   'force_skill', 
@@ -26,9 +26,9 @@ class SkillSerializer(serializers.ModelSerializer):
                   'species_name',
                   'species', 
                   'modifiers', 
-                  'skill_use_notes', 
-                  'skill_game_notes', 
-                  'skill_code',
+                  'use_notes', 
+                  'game_notes', 
+                  'code',
                   )
   
 

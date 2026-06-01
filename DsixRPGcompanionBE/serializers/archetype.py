@@ -45,63 +45,63 @@ class SpeciesField(serializers.PrimaryKeyRelatedField):
 
 
 class ArchetypeSerializer(serializers.ModelSerializer):
-    # archetype_equipment = ArchetypeEquipmentSerializer(many=True, required=False)
-    archetype_dexterity = serializers.DecimalField(max_digits=3, decimal_places=1)
-    archetype_knowledge = serializers.DecimalField(max_digits=3, decimal_places=1)
-    archetype_mechanical = serializers.DecimalField(max_digits=3, decimal_places=1)
-    archetype_perception = serializers.DecimalField(max_digits=3, decimal_places=1)
-    archetype_strength = serializers.DecimalField(max_digits=3, decimal_places=1)
-    archetype_technical = serializers.DecimalField(max_digits=3, decimal_places=1)
-    archetype_force_control = serializers.DecimalField(max_digits=3, decimal_places=1)
-    archetype_force_sense = serializers.DecimalField(max_digits=3, decimal_places=1)
-    archetype_force_alter = serializers.DecimalField(max_digits=3, decimal_places=1)
-    archetype_allowed_species = SpeciesField(many=True, required=False)
+    # equipment = ArchetypeEquipmentSerializer(many=True, required=False)
+    dexterity = serializers.DecimalField(max_digits=3, decimal_places=1)
+    knowledge = serializers.DecimalField(max_digits=3, decimal_places=1)
+    mechanical = serializers.DecimalField(max_digits=3, decimal_places=1)
+    perception = serializers.DecimalField(max_digits=3, decimal_places=1)
+    strength = serializers.DecimalField(max_digits=3, decimal_places=1)
+    technical = serializers.DecimalField(max_digits=3, decimal_places=1)
+    force_control = serializers.DecimalField(max_digits=3, decimal_places=1)
+    force_sense = serializers.DecimalField(max_digits=3, decimal_places=1)
+    force_alter = serializers.DecimalField(max_digits=3, decimal_places=1)
+    allowed_species = SpeciesField(many=True, required=False)
 
     class Meta:
         model = Archetype
         fields = ('id', 
-                  'archetype_name', 
-                  'archetype_for_NPC', 
-                  'archetype_force_sensitive', 
-                  'archetype_dexterity', 
-                  'archetype_knowledge', 
-                  'archetype_mechanical', 
-                  'archetype_perception', 
-                  'archetype_strength', 
-                  'archetype_technical', 
-                  'archetype_force_control', 
-                  'archetype_force_sense', 
-                  'archetype_force_alter', 
-                  'archetype_starting_credits', 
-                  'archetype_personality', 
-                  'archetype_background', 
-                  'archetype_objectives', 
-                  'archetype_a_quote',
-                  'archetype_allowed_species', 
-                  'archetype_game_notes', 
-                  'archetype_source')
+                  'name', 
+                  'for_NPC', 
+                  'force_sensitive', 
+                  'dexterity', 
+                  'knowledge', 
+                  'mechanical', 
+                  'perception', 
+                  'strength', 
+                  'technical', 
+                  'force_control', 
+                  'force_sense', 
+                  'force_alter', 
+                  'starting_credits', 
+                  'personality', 
+                  'background', 
+                  'objectives', 
+                  'a_quote',
+                  'allowed_species', 
+                  'game_notes', 
+                  'source')
             
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        if instance.archetype_allowed_species.exists():
-            representation['archetype_allowed_species'] = [species.species_name for species in instance.archetype_allowed_species.all()]
+        if instance.allowed_species.exists():
+            representation['allowed_species'] = [species.species_name for species in instance.allowed_species.all()]
             
         filtered_representation = {key: value for key, value in representation.items() if value not in [None, '', {}]}
         return filtered_representation
         
     def create(self, validated_data):
-        # equipment_list = validated_data.pop('archetype_equipment', [])
-        allowed_species = validated_data.pop('archetype_allowed_species', [])
+        # equipment_list = validated_data.pop('equipment', [])
+        allowed_species = validated_data.pop('allowed_species', [])
         archetype = Archetype.objects.create(**validated_data)        
-        archetype.archetype_allowed_species.set(allowed_species)
+        archetype.allowed_species.set(allowed_species)
         # for piece in equipment_list:
         #     ArchetypeEquipment.objects.create(archetype=archetype, **piece)
         return archetype
     
     def update(self, instance, validated_data):
-        allowed_species_data = validated_data.pop('archetype_allowed_species', None)
+        allowed_species_data = validated_data.pop('allowed_species', None)
         if allowed_species_data is not None:     
-            instance.archetype_allowed_species.set(allowed_species_data)
+            instance.allowed_species.set(allowed_species_data)
             
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
