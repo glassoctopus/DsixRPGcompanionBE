@@ -56,3 +56,62 @@ class Character(models.Model):
     @property
     def species_name(self):
         return self.species.species_name if self.species else 'No Species'
+    
+    def can_equip_item(self, equipment):
+        """Check if character meets all requirements for equipment"""
+        # Check archetype restrictions
+        if equipment.required_archetypes.exists():
+            if self.archetype not in equipment.required_archetypes.all():
+                # Check for override
+                if not EquipmentRestrictionOverride.objects.filter(
+                    character=self, equipment=equipment, can_equip=True
+                ).exists():
+                    return False, f"Requires archetype: {', '.join([a.archetype_name for a in equipment.required_archetypes.all()])}"
+        
+        if equipment.prohibited_archetypes.exists():
+            if self.archetype in equipment.prohibited_archetypes.all():
+                return False, f"Prohibited for {self.archetype.archetype_name} archetype"
+        
+        # Check species restrictions
+        if equipment.required_species.exists():
+            if self.species not in equipment.required_species.all():
+                if not EquipmentRestrictionOverride.objects.filter(
+                    character=self, equipment=equipment, can_equip=True
+                ).exists():
+                    return False, f"Requires species: {', '.join([s.species_name for s in equipment.required_species.all()])}"
+        
+        if equipment.prohibited_species.exists():
+            if self.species in equipment.prohibited_species.all():
+                return False, f"Prohibited for {self.species.species_name} species"
+        
+        # Check skill requirement
+        if equipment.required_skill and equipment.required_skill_rank:
+            try:
+                char_skill = CharacterSkill.objects.get(
+                    character=self, 
+                    skill=equipment.required_skill
+                )
+                if char_skill.skill_code < equipment.required_skill_rank:
+                    return False, f"Requires {equipment.required_skill.skill_name} at {equipment.required_skill_rank}D"
+            except CharacterSkill.DoesNotExist:
+                return False, f"Requires {equipment.required_skill.skill_name} at {equipment.required_skill_rank}D"
+        
+        return True, "Can equip"
+    
+    def get_total_encumbrance(self):
+        """Calculate total weight of carried/equipped items"""
+        total_weight = 0
+        inv_items = self.inventory.filter(status__in=['carried', 'equipped'])
+        for item in inv_items:
+            if item.equipment.weight_kg:
+                total_weight += item.equipment.weight_kg * item.quantity
+        return total_weight
+    
+    def get_equipped_weapons(self):
+        return self.equipped_weapons.select_related('character_equipment__equipment').all()
+    
+    def get_equipped_armor(self):
+        return getattr(self, 'equipped_armor', None)
+    
+    def get_equipped_gear(self):
+        return self.equipped_gear.select_related('character_equipment__equipment').all()

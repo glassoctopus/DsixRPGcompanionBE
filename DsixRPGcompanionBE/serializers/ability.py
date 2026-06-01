@@ -10,25 +10,26 @@ class NameOfSpeciesOfAbility(serializers.ModelSerializer):
 
 class AbilitySerializer(serializers.ModelSerializer):
     ability_of_the_species = NameOfSpeciesOfAbility(read_only=True)
-    species_name = serializers.CharField(source='ability_of_the_species.species_name', read_only=True)
+    species_name = serializers.CharField(source='species.name', read_only=True)
     
     class Meta:
         model = Ability
         fields = (
             'id',
             'attribute',
-            'ability_name',
+            'name',
             'time_taken',
             'is_a_reaction',
             'force_ability',
             'species_specific',
             'species_name',
             'ability_of_the_species',
-            'ability_notes',
+            'notes',
             'modifiers',
-            'ability_use_notes',
-            'ability_game_notes',
-            'ability_code',
-            'ability_source',
+            'use_notes',
+            'game_notes',
+            'code',
+            'source',
+            'home_brew'
         )
 
